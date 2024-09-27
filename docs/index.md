@@ -2,7 +2,7 @@
 
 ## Steps to Reproduce: Bowling Alley Scene
 
-1. Download and unzip the source code from the GitHub repository - https://github.com/Shambhaviiiit/VReqDV
+1. Download and unzip the source code from the GitHub repository - https://github.com/VreqDV/vreqdv-tool
 2. Open Unity Hub on your local machine (version 2022.3.9f1 or later) and create a new project. Select VR domain.
 3. In the Unity Editor, under the Project tab, locate the Assets folder. Place the src folder from the downloaded and unzipped source code here.
 4. The src folder contains VReqST specifications for the Bowling Alley scene. These can be modified according to the user’s requirements.
