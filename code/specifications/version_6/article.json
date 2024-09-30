@@ -1,0 +1,85 @@
+{
+  "articles": [
+    {
+      "Transform_initialpos": {
+        "x": 0.0,
+        "y": 3.0,
+        "z": 0.0
+      },
+      "XRRigidObject": {
+        "value": 0,
+        "mass": 0,
+        "dragfriction": 0,
+        "angulardrag": 0,
+        "Isgravityenable": false,
+        "IsKinematic": false,
+        "CanInterpolate": 0,
+        "CollisionPolling": "none"
+      },
+      "Transform_objectscale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "m_Layer": 0,
+      "m_Name": "Directional Light",
+      "m_TagString": "Untagged",
+      "m_StaticEditorFlags": 0,
+      "_objectname": "Directional Light"
+    },
+    {
+      "Transform_initialpos": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "XRRigidObject": {
+        "value": 0,
+        "mass": 0,
+        "dragfriction": 0,
+        "angulardrag": 0,
+        "Isgravityenable": false,
+        "IsKinematic": false,
+        "CanInterpolate": 0,
+        "CollisionPolling": "none"
+      },
+      "Transform_objectscale": {
+        "x": 12.5517082,
+        "y": 1.0,
+        "z": 2.4231
+      },
+      "m_Layer": 0,
+      "m_Name": "Cube",
+      "m_TagString": "Untagged",
+      "m_StaticEditorFlags": 0,
+      "_objectname": "Cube"
+    },
+    {
+      "Transform_initialpos": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": -10.0
+      },
+      "XRRigidObject": {
+        "value": 0,
+        "mass": 0,
+        "dragfriction": 0,
+        "angulardrag": 0,
+        "Isgravityenable": false,
+        "IsKinematic": false,
+        "CanInterpolate": 0,
+        "CollisionPolling": "none"
+      },
+      "Transform_objectscale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "m_Layer": 0,
+      "m_Name": "Main Camera",
+      "m_TagString": "MainCamera",
+      "m_StaticEditorFlags": 0,
+      "_objectname": "Main Camera"
+    }
+  ]
+}
