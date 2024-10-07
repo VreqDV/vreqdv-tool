@@ -19,11 +19,640 @@
 ### Object Properties - article.json
 
 ```
+{
+	"articles": [
+		{
+			"_objectname": "Ball",
+			"_sid": "_gameball",
+			"_slabel": "This is used to roll on pins",
+			"_IsHidden": 0,
+			"_enumcount": 1,
+			"_Is3DObject": 1,
+			"HasChild": 0,
+			"shape": "sphere",
+			"dimension": {
+				"dradii": 5,
+				"dvolumn": "null",
+				"dlength": "null",
+				"dbreadth": "null",
+				"dheigth": "null"
+			},
+			"IsText": false,
+			"IsText3D": false,
+			"lighting": {
+				"CastShadow": "1",
+				"ReceiveShadow": "1",
+				"ContributeGlobalIlumination": "1"
+			},
+			"IsIlluminate": true,
+			"Transform_initialpos": {
+				"x": "0",
+				"y": "0.5",
+				"z": "0"
+			},
+			"Transform_initialrotation": {
+				"x": "0",
+				"y": "0",
+				"z": "0"
+			},
+			"Transform_objectscale": {
+				"x": "1",
+				"y": "1",
+				"z": "1"
+			},
+			"repeattransfrom": {
+				"distfactorx": "null",
+				"distfactory": "null",
+				"distfactorz": "null"
+			},
+			"Interaction": {
+				"XRGrabInteractable": "1",
+				"XRInteractionMaskLayer": "nothing/everything/custom",
+				"TrackPosition": "1",
+				"TrackRotation": "1",
+				"Throw_Detach": "1",
+				"forcegravity": "1",
+				"velocity": "3",
+				"angularvelocity": "2"
+			},
+			"Smoothing": "1",
+			"Smoothing_duration": "0.5",
+			"attachtransform": {
+				"rotate_x": "null",
+				"rotate_y": "null",
+				"rotate_z": "null",
+				"pos_x": "null",
+				"pos_y": "null",
+				"pos_z": "null"
+			},
+			"XRRigidObject": {
+				"value": "1",
+				"mass": "20",
+				"dragfriction": "5",
+				"angulardrag": "4",
+				"Isgravityenable": "true",
+				"IsKinematic": "1",
+				"CanInterpolate": "0",
+				"CollisionPolling": "discreet/continous"
+			},
+			"aud_hasaudio": "1",
+			"aud_type": "static/dynamic",
+			"aud_src": "/path",
+			"aud_volume": "10",
+			"aud_PlayInloop": "0",
+			"aud_IsSurround": "1",
+			"aud_Dopplerlevel": "0.9",
+			"aud_spread": "null",
+			"aud_mindist": "null",
+			"aud_maxdist": "null",
+			"_Opttxt1": "null",
+			"@context_img_source": "blank"
+		},
+		{
+			"_objectname": "Plane",
+			"_sid": "_pitch",
+			"_slabel": "This is where the ball rolls",
+			"_IsHidden": 0,
+			"_enumcount": 1,
+			"_Is3DObject": 1,
+			"HasChild": 0,
+			"shape": "cube",
+			"dimension": {
+				"dradii": 5,
+				"dvolumn": "null",
+				"dlength": "null",
+				"dbreadth": "null",
+				"dheigth": "null"
+			},
+			"IsText": false,
+			"IsText3D": false,
+			"lighting": {
+				"CastShadow": "1",
+				"ReceiveShadow": "1",
+				"ContributeGlobalIlumination": "1"
+			},
+			"IsIlluminate": true,
+			"Transform_initialpos": {
+				"x": "0",
+				"y": "0",
+				"z": "0"
+			},
+			"Transform_initialrotation": {
+				"x": "0",
+				"y": "0",
+				"z": "0"
+			},
+			"Transform_objectscale": {
+				"x": "20",
+				"y": "0.1",
+				"z": "5"
+			},
+			"repeattransfrom": {
+				"distfactorx": "null",
+				"distfactory": "null",
+				"distfactorz": "null"
+			},
+			"Interaction": {
+				"XRGrabInteractable": "1",
+				"XRInteractionMaskLayer": "nothing/everything/custom",
+				"TrackPosition": "1",
+				"TrackRotation": "1",
+				"Throw_Detach": "1",
+				"forcegravity": "1",
+				"velocity": "3",
+				"angularvelocity": "2"
+			},
+			"Smoothing": "1",
+			"Smoothing_duration": "0.5",
+			"attachtransform": {
+				"rotate_x": "null",
+				"rotate_y": "null",
+				"rotate_z": "null",
+				"pos_x": "null",
+				"pos_y": "null",
+				"pos_z": "null"
+			},
+			"XRRigidObject": {
+				"value": "1",
+				"mass": "20",
+				"dragfriction": "5",
+				"angulardrag": "4",
+				"Isgravityenable": "true",
+				"IsKinematic": "1",
+				"CanInterpolate": "0",
+				"CollisionPolling": "discreet/continous"
+			},
+			"aud_hasaudio": "1",
+			"aud_type": "static/dynamic",
+			"aud_src": "/path",
+			"aud_volume": "10",
+			"aud_PlayInloop": "0",
+			"aud_IsSurround": "1",
+			"aud_Dopplerlevel": "0.9",
+			"aud_spread": "null",
+			"aud_mindist": "null",
+			"aud_maxdist": "null",
+			"_Opttxt1": "null",
+			"@context_img_source": "blank"
+		},
+		{
+			"_objectname": "Pin_1",
+			"_sid": "_pinsetter5",
+			"_slabel": "This is pin",
+			"_IsHidden": 0,
+			"_enumcount": 1,
+			"_Is3DObject": 1,
+			"HasChild": 0,
+			"shape": "sphere",
+			"dimension": {
+				"dradii": 5,
+				"dvolumn": "null",
+				"dlength": "null",
+				"dbreadth": "null",
+				"dheigth": "null"
+			},
+			"IsText": false,
+			"IsText3D": false,
+			"lighting": {
+				"CastShadow": "1",
+				"ReceiveShadow": "1",
+				"ContributeGlobalIlumination": "1"
+			},
+			"IsIlluminate": true,
+			"Transform_initialpos": {
+				"x": "5",
+				"y": "0.5",
+				"z": "0"
+			},
+			"Transform_initialrotation": {
+				"x": "0",
+				"y": "0",
+				"z": "0"
+			},
+			"Transform_objectscale": {
+				"x": "0.2",
+				"y": "1",
+				"z": "0.2"
+			},
+			"repeattransfrom": {
+				"distfactorx": "null",
+				"distfactory": "null",
+				"distfactorz": "null"
+			},
+			"Interaction": {
+				"XRGrabInteractable": "1",
+				"XRInteractionMaskLayer": "nothing/everything/custom",
+				"TrackPosition": "1",
+				"TrackRotation": "1",
+				"Throw_Detach": "1",
+				"forcegravity": "1",
+				"velocity": "3",
+				"angularvelocity": "2"
+			},
+			"Smoothing": "1",
+			"Smoothing_duration": "0.5",
+			"attachtransform": {
+				"rotate_x": "null",
+				"rotate_y": "null",
+				"rotate_z": "null",
+				"pos_x": "null",
+				"pos_y": "null",
+				"pos_z": "null"
+			},
+			"XRRigidObject": {
+				"value": "1",
+				"mass": "20",
+				"dragfriction": "5",
+				"angulardrag": "4",
+				"Isgravityenable": "true",
+				"IsKinematic": "1",
+				"CanInterpolate": "0",
+				"CollisionPolling": "discreet/continous"
+			},
+			"aud_hasaudio": "1",
+			"aud_type": "static/dynamic",
+			"aud_src": "/path",
+			"aud_volume": "10",
+			"aud_PlayInloop": "0",
+			"aud_IsSurround": "1",
+			"aud_Dopplerlevel": "0.9",
+			"aud_spread": "null",
+			"aud_mindist": "null",
+			"aud_maxdist": "null",
+			"_Opttxt1": "null",
+			"@context_img_source": "blank"
+		},
+		{
+			"_objectname": "Pin_2",
+			"_sid": "_pinsetter5",
+			"_slabel": "This is pin",
+			"_IsHidden": 0,
+			"_enumcount": 1,
+			"_Is3DObject": 1,
+			"HasChild": 0,
+			"shape": "sphere",
+			"dimension": {
+				"dradii": 5,
+				"dvolumn": "null",
+				"dlength": "null",
+				"dbreadth": "null",
+				"dheigth": "null"
+			},
+			"IsText": false,
+			"IsText3D": false,
+			"lighting": {
+				"CastShadow": "1",
+				"ReceiveShadow": "1",
+				"ContributeGlobalIlumination": "1"
+			},
+			"IsIlluminate": true,
+			"Transform_initialpos": {
+				"x": "5.5",
+				"y": "0.5",
+				"z": "1"
+			},
+			"Transform_initialrotation": {
+				"x": "0",
+				"y": "0",
+				"z": "0"
+			},
+			"Transform_objectscale": {
+				"x": "0.2",
+				"y": "1",
+				"z": "0.2"
+			},
+			"repeattransfrom": {
+				"distfactorx": "null",
+				"distfactory": "null",
+				"distfactorz": "null"
+			},
+			"Interaction": {
+				"XRGrabInteractable": "1",
+				"XRInteractionMaskLayer": "nothing/everything/custom",
+				"TrackPosition": "1",
+				"TrackRotation": "1",
+				"Throw_Detach": "1",
+				"forcegravity": "1",
+				"velocity": "3",
+				"angularvelocity": "2"
+			},
+			"Smoothing": "1",
+			"Smoothing_duration": "0.5",
+			"attachtransform": {
+				"rotate_x": "null",
+				"rotate_y": "null",
+				"rotate_z": "null",
+				"pos_x": "null",
+				"pos_y": "null",
+				"pos_z": "null"
+			},
+			"XRRigidObject": {
+				"value": "1",
+				"mass": "20",
+				"dragfriction": "5",
+				"angulardrag": "4",
+				"Isgravityenable": "true",
+				"IsKinematic": "1",
+				"CanInterpolate": "0",
+				"CollisionPolling": "discreet/continous"
+			},
+			"aud_hasaudio": "1",
+			"aud_type": "static/dynamic",
+			"aud_src": "/path",
+			"aud_volume": "10",
+			"aud_PlayInloop": "0",
+			"aud_IsSurround": "1",
+			"aud_Dopplerlevel": "0.9",
+			"aud_spread": "null",
+			"aud_mindist": "null",
+			"aud_maxdist": "null",
+			"_Opttxt1": "null",
+			"@context_img_source": "blank"
+		},
+		{
+			"_objectname": "Pin_3",
+			"_sid": "_pinsetter5",
+			"_slabel": "This is pin",
+			"_IsHidden": 0,
+			"_enumcount": 1,
+			"_Is3DObject": 1,
+			"HasChild": 0,
+			"shape": "sphere",
+			"dimension": {
+				"dradii": 5,
+				"dvolumn": "null",
+				"dlength": "null",
+				"dbreadth": "null",
+				"dheigth": "null"
+			},
+			"IsText": false,
+			"IsText3D": false,
+			"lighting": {
+				"CastShadow": "1",
+				"ReceiveShadow": "1",
+				"ContributeGlobalIlumination": "1"
+			},
+			"IsIlluminate": true,
+			"Transform_initialpos": {
+				"x": "5.5",
+				"y": "0.5",
+				"z": "-1"
+			},
+			"Transform_initialrotation": {
+				"x": "0",
+				"y": "0",
+				"z": "0"
+			},
+			"Transform_objectscale": {
+				"x": "0.2",
+				"y": "1",
+				"z": "0.2"
+			},
+			"repeattransfrom": {
+				"distfactorx": "null",
+				"distfactory": "null",
+				"distfactorz": "null"
+			},
+			"Interaction": {
+				"XRGrabInteractable": "1",
+				"XRInteractionMaskLayer": "nothing/everything/custom",
+				"TrackPosition": "1",
+				"TrackRotation": "1",
+				"Throw_Detach": "1",
+				"forcegravity": "1",
+				"velocity": "3",
+				"angularvelocity": "2"
+			},
+			"Smoothing": "1",
+			"Smoothing_duration": "0.5",
+			"attachtransform": {
+				"rotate_x": "null",
+				"rotate_y": "null",
+				"rotate_z": "null",
+				"pos_x": "null",
+				"pos_y": "null",
+				"pos_z": "null"
+			},
+			"XRRigidObject": {
+				"value": "1",
+				"mass": "20",
+				"dragfriction": "5",
+				"angulardrag": "4",
+				"Isgravityenable": "true",
+				"IsKinematic": "1",
+				"CanInterpolate": "0",
+				"CollisionPolling": "discreet/continous"
+			},
+			"aud_hasaudio": "1",
+			"aud_type": "static/dynamic",
+			"aud_src": "/path",
+			"aud_volume": "10",
+			"aud_PlayInloop": "0",
+			"aud_IsSurround": "1",
+			"aud_Dopplerlevel": "0.9",
+			"aud_spread": "null",
+			"aud_mindist": "null",
+			"aud_maxdist": "null",
+			"_Opttxt1": "null",
+			"@context_img_source": "blank"
+		}
+	]
+}
 ```
 
 ### Action Responses - action-response.json
 
 ```
+{
+    "ObjAction": [
+        {
+            "actresid": "ball_roll_on_click",
+            "trigger_event": {
+                "sourceObj": "Ball",
+                "IsCollision": "false",
+                "action": "input",
+                "force": {},
+                "disappear": "none",
+                "inputType": "click",
+                "repeatactionfor": ""
+            },
+            "response_event": {
+                "targetObj": "Ball",
+                "IsCollision": "false",
+                "response": "force",
+                "force": {
+                    "direction": "forward",
+                    "strength": "10",
+                    "type": "impulse"
+                },
+                "disappear": "none",
+                "outputType": "none",
+                "repeatactionfor": ""
+            },
+            "comment": "<freetext>",
+            "Syncronous": "true"
+        },
+        {
+            "actresid": "ball_pin",
+            "trigger_event": {
+                "sourceObj": "Ball",
+                "IsCollision": "true",
+                "action": "none",
+                "force": {},
+                "disappear": "none",
+                "inputType": "none",
+                "repeatactionfor": ""
+            },
+            "response_event": {
+                "targetObj": "Pin_1",
+                "IsCollision": "true",
+                "response": "none",
+                "force": {},
+                "disappear": "none",
+                "outputType": "none",
+                "repeatactionfor": ""
+            },
+            "comment": "<freetext>",
+            "Syncronous": "true"
+        },
+        {
+            "actresid": "ball_pin2",
+            "trigger_event": {
+                "sourceObj": "Ball",
+                "IsCollision": "true",
+                "action": "none",
+                "force": {},
+                "disappear": "none",
+                "inputType": "none",
+                "repeatactionfor": ""
+            },
+            "response_event": {
+                "targetObj": "Pin_2",
+                "IsCollision": "true",
+                "response": "none",
+                "force": {},
+                "disappear": "none",
+                "outputType": "none",
+                "repeatactionfor": ""
+            },
+            "comment": "<freetext>",
+            "Syncronous": "true"
+        },
+        {
+            "actresid": "ball_pin3",
+            "trigger_event": {
+                "sourceObj": "Ball",
+                "IsCollision": "true",
+                "action": "none",
+                "force": {},
+                "disappear": "none",
+                "inputType": "none",
+                "repeatactionfor": ""
+            },
+            "response_event": {
+                "targetObj": "Pin_3",
+                "IsCollision": "true",
+                "response": "none",
+                "force": {},
+                "disappear": "none",
+                "outputType": "none",
+                "repeatactionfor": ""
+            },
+            "comment": "<freetext>",
+            "Syncronous": "true"
+        },
+        {
+            "actresid": "pin_fall_disappear",
+            "trigger_event": {
+                "sourceObj": "Pin_1",
+                "IsCollision": "false",
+                "action": "change",
+                "change_property_by": {
+                    "Transform_initialrotation": {
+                        "x": "90",
+                        "y": "90",
+                        "z": "90"
+                    }
+                },
+                "force": {},
+                "disappear": "none",
+                "inputType": "none",
+                "repeatactionfor": ""
+            },
+            "response_event": {
+                "targetObj": "Pin_1",
+                "IsCollision": "false",
+                "response": "disappear",
+                "force": {},
+                "disappear": "target",
+                "outputType": "none",
+                "repeatactionfor": ""
+            },
+            "comment": "<freetext>",
+            "Syncronous": "true"
+        },
+        {
+            "actresid": "pin_fall_disappear2",
+            "trigger_event": {
+                "sourceObj": "Pin_2",
+                "IsCollision": "false",
+                "action": "change",
+                "change_property_by": {
+                    "Transform_initialrotation": {
+                        "x": "90",
+                        "y": "90",
+                        "z": "90"
+                    }
+                },
+                "force": {},
+                "disappear": "none",
+                "inputType": "none",
+                "repeatactionfor": ""
+            },
+            "response_event": {
+                "targetObj": "Pin_2",
+                "IsCollision": "false",
+                "response": "disappear",
+                "force": {},
+                "disappear": "target",
+                "outputType": "none",
+                "repeatactionfor": ""
+            },
+            "comment": "<freetext>",
+            "Syncronous": "true"
+        },
+        {
+            "actresid": "pin_fall_disappear3",
+            "trigger_event": {
+                "sourceObj": "Pin_3",
+                "IsCollision": "false",
+                "action": "change",
+                "change_property_by": {
+                    "Transform_initialrotation": {
+                        "x": "90",
+                        "y": "90",
+                        "z": "90"
+                    }
+                },
+                "force": {},
+                "disappear": "none",
+                "inputType": "none",
+                "repeatactionfor": ""
+            },
+            "response_event": {
+                "targetObj": "Pin_3",
+                "IsCollision": "false",
+                "response": "disappear",
+                "force": {},
+                "disappear": "target",
+                "outputType": "none",
+                "repeatactionfor": ""
+            },
+            "comment": "<freetext>",
+            "Syncronous": "true"
+        }
+    ]
+}
 ```
 
 ### Timeline - timeline.json
