@@ -5,9 +5,12 @@
 1. Download and unzip the source code from the GitHub repository - https://github.com/VreqDV/vreqdv-tool
 2. Open Unity Hub on your local machine (version 2022.3.9f1 or later) and create a new project. Select VR domain.
 3. In the Unity Editor, under the Project tab, locate the Assets folder. Place the src folder from the downloaded and unzipped source code here.
-4. The src folder contains VReqST specifications for the Bowling Alley scene. These can be modified according to the user’s requirements.
+4. The src folder contains VReqST specifications for the Bowling Alley scene. These can be modified according to the user’s requirements. Sample specifications can also be found [here](https://vreqdv.github.io/vreqdv-tool/#vreqst-specifications-of-bowling-alley-scene).
 5. Save the project.
-6. At the top of the Unity Editor, locate and click on the menu Window in the toolbar. Select VReqDV. VReqDV tab is opened. (Refer Figure) You can see the specifications appearing at the left in the window, labeled version 1.
+6. At the top of the Unity Editor, locate and click on the menu Window in the toolbar. Select VReqDV. VReqDV tab is opened. (Refer Figure Below) You can see the specifications appearing at the left in the window, labeled version 1. On selecting 'Display Mock-up', the mock-up scene for version 1 is generated and displayed on the scene editor window.
+
+![image](https://github.com/user-attachments/assets/bdf46bcb-f59b-422b-93d5-ef0532ddce01)
+
 
 ## VReqST specifications of Bowling Alley Scene
 
