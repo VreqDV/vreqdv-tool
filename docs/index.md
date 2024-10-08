@@ -5,10 +5,14 @@
 1. Download and unzip the source code from the GitHub repository - https://github.com/VreqDV/vreqdv-tool
 2. Open Unity Hub on your local machine (version 2022.3.9f1 or later) and create a new project. Select VR template.
 Note: If you do not have a VR headset to deploy the scene, you can select Unity 3D Core template instead of VR.
-3. In the Unity Editor, under the Project tab, locate the Assets folder. Place the src folder from the downloaded and unzipped source code here.
-4. The src folder contains VReqST specifications for the Bowling Alley scene. These can be modified according to the user’s requirements. Sample specifications can also be found [here](https://vreqdv.github.io/vreqdv-tool/#vreqst-specifications-of-bowling-alley-scene).
-5. Save the project.
-6. At the top of the Unity Editor, locate and click on the menu Window in the toolbar. Select VReqDV. VReqDV tab is opened. (Refer Figure Below) You can see the specifications appearing at the left in the window, labeled version 1. On selecting 'Display Mock-up', the mock-up scene for version 1 is generated and displayed on the scene editor window.
+3. Installing Newtonsoft json package: In the Unity window, go to the 'Window' menu in the toolbar, and open Package Manager. On the toop left corner, select the 'plus' symbol to add the package. Select 'Add from GitHub URL' and enter this URL in the popup field: com.unity.nuget.newtonsoft-json. Click on Add.
+4. VReqDV source code: Locate the project directory of the newly created Unity Project in your file manager. Go to the Assets folder. Place the contents of the 'code' folder from the downloaded and unzipped source code here.
+Your project structure will now look like this.
+![image](https://github.com/user-attachments/assets/86faa7b9-3cfe-4dcc-b8e8-773b35662f72)
+
+6. The project will now contain a directory titled 'specifications', which has the model template specifications for the Bowling Alley scene. These can be modified according to the user’s requirements. Sample specifications can also be found [here](https://vreqdv.github.io/vreqdv-tool/#vreqst-specifications-of-bowling-alley-scene).
+7. If modified any requirements, make sure to place them in version 1. Save the project.
+8. At the top of the Unity Editor, locate and click on the menu 'Window' in the toolbar. Select VReqDV. VReqDV tab is opened. (Refer Figure Below) You can see the specifications appearing at the left in the window, labeled version 1. On selecting 'Display Mock-up', the mock-up scene for version 1 is generated and displayed on the scene editor window.
 
 ![image](https://github.com/user-attachments/assets/bdf46bcb-f59b-422b-93d5-ef0532ddce01)
 
