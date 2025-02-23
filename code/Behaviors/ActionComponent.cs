@@ -17,8 +17,7 @@ public class ActionComponent : MonoBehaviour
         {
             if (trigger.IsTriggered(gameObject))
             {
-                Rigidbody rb = targetObject.GetComponent<Rigidbody>();
-                response.Execute(rb);
+                response.Execute(targetObject);
             }
         }
     }

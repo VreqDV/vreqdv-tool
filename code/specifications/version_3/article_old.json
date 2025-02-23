@@ -1,35 +1,107 @@
 {
   "0": {
     "Transform_initialpos": {
-      "x": 0.0,
-      "y": 3.0,
-      "z": 0.0
+      "x": 5.5,
+      "y": 0.5,
+      "z": -1.0
     },
     "XRRigidObject": {
-      "value": 0,
-      "mass": 0,
-      "dragfriction": 0,
-      "angulardrag": 0,
-      "Isgravityenable": false,
+      "value": 1,
+      "mass": 1.0,
+      "dragfriction": 0.0,
+      "angulardrag": 0.0,
+      "Isgravityenable": true,
       "IsKinematic": false,
       "CanInterpolate": 0,
-      "CollisionPolling": "none"
+      "CollisionPolling": "discrete"
     },
     "Transform_objectscale": {
-      "x": 1.0,
-      "y": 1.0,
-      "z": 1.0
+      "x": 0.2,
+      "y": 0.5,
+      "z": 0.2
+    },
+    "Transform_initialrotation": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
     },
     "m_Layer": 0,
-    "m_Name": "Directional Light",
+    "m_Name": "Pin_3",
     "m_TagString": "Untagged",
     "m_StaticEditorFlags": 0,
-    "_objectname": "Directional Light"
+    "shape": "Capsule",
+    "_objectname": "Pin_3"
   },
   "1": {
     "Transform_initialpos": {
-      "x": 2.95,
-      "y": 3.01,
+      "x": 5.5,
+      "y": 0.5,
+      "z": 1.0
+    },
+    "XRRigidObject": {
+      "value": 1,
+      "mass": 1.0,
+      "dragfriction": 0.0,
+      "angulardrag": 0.0,
+      "Isgravityenable": true,
+      "IsKinematic": false,
+      "CanInterpolate": 0,
+      "CollisionPolling": "discrete"
+    },
+    "Transform_objectscale": {
+      "x": 0.2,
+      "y": 0.5,
+      "z": 0.2
+    },
+    "Transform_initialrotation": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "m_Layer": 0,
+    "m_Name": "Pin_2",
+    "m_TagString": "Untagged",
+    "m_StaticEditorFlags": 0,
+    "shape": "Capsule",
+    "_objectname": "Pin_2"
+  },
+  "2": {
+    "Transform_initialpos": {
+      "x": 5.0,
+      "y": 0.5,
+      "z": 0.5
+    },
+    "XRRigidObject": {
+      "value": 1,
+      "mass": 1.0,
+      "dragfriction": 0.0,
+      "angulardrag": 0.0,
+      "Isgravityenable": true,
+      "IsKinematic": false,
+      "CanInterpolate": 0,
+      "CollisionPolling": "discrete"
+    },
+    "Transform_objectscale": {
+      "x": 0.2,
+      "y": 0.5,
+      "z": 0.2
+    },
+    "Transform_initialrotation": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "m_Layer": 0,
+    "m_Name": "Pin_1",
+    "m_TagString": "Untagged",
+    "m_StaticEditorFlags": 0,
+    "shape": "Capsule",
+    "_objectname": "Pin_1"
+  },
+  "3": {
+    "Transform_initialpos": {
+      "x": 0.0,
+      "y": 0.0,
       "z": 0.0
     },
     "XRRigidObject": {
@@ -43,41 +115,53 @@
       "CollisionPolling": "none"
     },
     "Transform_objectscale": {
-      "x": 4.7796,
-      "y": 1.0,
-      "z": 2.4231
+      "x": 20.0,
+      "y": 0.1,
+      "z": 5.0
+    },
+    "Transform_initialrotation": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
     },
     "m_Layer": 0,
-    "m_Name": "Cube",
+    "m_Name": "Plane",
     "m_TagString": "Untagged",
     "m_StaticEditorFlags": 0,
-    "_objectname": "Cube"
+    "shape": "Cube",
+    "_objectname": "Plane"
   },
-  "2": {
+  "4": {
     "Transform_initialpos": {
-      "x": 0.0,
-      "y": 1.0,
-      "z": -10.0
+      "x": 2.62,
+      "y": 0.5,
+      "z": 0.0
     },
     "XRRigidObject": {
-      "value": 0,
-      "mass": 0,
-      "dragfriction": 0,
-      "angulardrag": 0,
-      "Isgravityenable": false,
+      "value": 1,
+      "mass": 1.0,
+      "dragfriction": 0.0,
+      "angulardrag": 0.0,
+      "Isgravityenable": true,
       "IsKinematic": false,
       "CanInterpolate": 0,
-      "CollisionPolling": "none"
+      "CollisionPolling": "discrete"
     },
     "Transform_objectscale": {
       "x": 1.0,
       "y": 1.0,
       "z": 1.0
     },
+    "Transform_initialrotation": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
     "m_Layer": 0,
-    "m_Name": "Main Camera",
-    "m_TagString": "MainCamera",
+    "m_Name": "Ball",
+    "m_TagString": "Untagged",
     "m_StaticEditorFlags": 0,
-    "_objectname": "Main Camera"
+    "shape": "Sphere",
+    "_objectname": "Ball"
   }
 }

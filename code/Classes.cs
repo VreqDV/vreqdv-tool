@@ -220,7 +220,7 @@ public class Article
     public string aud_mindist { get; set; }
     public string aud_maxdist { get; set; }
     public string _Opttxt1 { get; set; }
-    public string @context_img_source { get; set; }
+    public string context_img_source { get; set; }
 }
 
 public class Dimension
