@@ -1152,6 +1152,26 @@ public class MainMenu : EditorWindow
                                 triggerData["inputType"] = "none";
                                 triggerData["change_property_by"] = "none";
                                 break;
+                            case "PositionChange":
+                                triggerData["isCollision"] = "false";
+                                triggerData["action"] = "none";
+                                triggerData["inputType"] = "none";
+                                PositionChange positionChange = actionComponent.trigger as PositionChange;
+                                if (positionChange != null)
+                                {
+                                    triggerData["change_property_by"] = new Dictionary<string, Dictionary<string, string>>
+                                    {
+                                        { 
+                                            "Transform_initialpos", new Dictionary<string, string>
+                                            {
+                                                { "x", positionChange.fallThreshold_x.ToString() },
+                                                { "y", positionChange.fallThreshold_y.ToString() },
+                                                { "z", positionChange.fallThreshold_z.ToString() }
+                                            }
+                                        }
+                                    };
+                                }
+                                break;
                             default:
                                 triggerData["isCollision"] = "false";
                                 triggerData["action"] = "none";
@@ -1177,10 +1197,12 @@ public class MainMenu : EditorWindow
                                 responseData["isCollision"] = "false";
                                 responseData["response"] = "disappear";
                                 responseData["force"] = "none";
+                                responseData["change_property_by"] = "none";
                                 break;
                             case "MoveForwardBehavior":
                                 responseData["isCollision"] = "false";
                                 responseData["response"] = "force";
+                                responseData["change_property_by"] = "none";
                                 MoveForwardBehavior moveForwardBehavior = actionComponent.response as MoveForwardBehavior;
                                 if(moveForwardBehavior != null)
                                 {
@@ -1197,11 +1219,33 @@ public class MainMenu : EditorWindow
                                 responseData["isCollision"] = "true";
                                 responseData["response"] = "none";
                                 responseData["force"] = "none";
+                                responseData["change_property_by"] = "none";
+                                break;
+                            case "PlaceObjectOn":
+                                responseData["isCollision"] = "true";
+                                responseData["response"] = "none";
+                                responseData["force"] = "none";
+                                PlaceObjectOn placeObjectOn = actionComponent.response as PlaceObjectOn;
+                                if(placeObjectOn != null)
+                                {
+                                    responseData["change_property_by"] = new Dictionary<string, Dictionary<string, string>>
+                                    {
+                                        { 
+                                            "Transform_initialpos", new Dictionary<string, string>
+                                            {
+                                                { "x", placeObjectOn.pos_x.ToString() },
+                                                { "y", placeObjectOn.pos_y.ToString() },
+                                                { "z", placeObjectOn.pos_z.ToString() }
+                                            }
+                                        }
+                                    };
+                                }
                                 break;
                             default:
                                 responseData["isCollision"] = "false";
                                 responseData["response"] = "none";
                                 responseData["force"] = "none";
+                                responseData["change_property_by"] = "none";
                                 break;
                         }
                     }
