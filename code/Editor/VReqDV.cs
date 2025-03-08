@@ -452,6 +452,29 @@ public class MainMenu : EditorWindow
                         return angleTrigger;
                     }
                 }
+                
+                if (changedProperties != null && changedProperties.ContainsKey("Transform_initialpos"))
+                {
+                    var positionProperties = changedProperties["Transform_initialpos"] as JObject;
+                    if (positionProperties != null)
+                    {
+                        PositionChange positionChange = ScriptableObject.CreateInstance<PositionChange>();
+
+                        if (positionProperties.TryGetValue("x", out JToken xPositionToken))
+                        {
+                            positionChange.fallThreshold_x = xPositionToken.ToObject<float>();
+                        }
+                        if (positionProperties.TryGetValue("y", out JToken yPositionToken))
+                        {
+                            positionChange.fallThreshold_y = yPositionToken.ToObject<float>();
+                        }
+                        if (positionProperties.TryGetValue("z", out JToken zPositionToken))
+                        {
+                            positionChange.fallThreshold_z = zPositionToken.ToObject<float>();
+                        }
+                        return positionChange;
+                    }
+                }
             }
         }
 
@@ -511,6 +534,36 @@ public class MainMenu : EditorWindow
                         moveForwardBehavior.type = forceTypeToken.ToObject<string>();
                     }
                     return moveForwardBehavior;
+                }
+            }
+        }
+
+        if (responseEvent.response == "change")
+        {
+            if (responseEvent.change_property_by != null)
+            {
+                var changedProperties = responseEvent.change_property_by as JObject;
+                if (changedProperties != null && changedProperties.ContainsKey("Transform_initialpos"))
+                {
+                    var positionProperties = changedProperties["Transform_initialpos"] as JObject;
+                    if (positionProperties != null)
+                    {
+                        PlaceObjectOn placeObjectOn = ScriptableObject.CreateInstance<PlaceObjectOn>();
+
+                        if (positionProperties.TryGetValue("x", out JToken xPositionToken))
+                        {
+                            placeObjectOn.pos_x = xPositionToken.ToObject<float>();
+                        }
+                        if (positionProperties.TryGetValue("y", out JToken yPositionToken))
+                        {
+                            placeObjectOn.pos_y = yPositionToken.ToObject<float>();
+                        }
+                        if (positionProperties.TryGetValue("z", out JToken zPositionToken))
+                        {
+                            placeObjectOn.pos_z = zPositionToken.ToObject<float>();
+                        }
+                        return placeObjectOn;
+                    }
                 }
             }
         }
@@ -715,6 +768,29 @@ public class MainMenu : EditorWindow
                             changedProperties["Transform_initialrotation"] = angles;
                         }
                     }
+
+                    if (changedProperties.ContainsKey("Transform_intitialpos"))
+                    {
+                        EditorGUILayout.LabelField("Change in Position", EditorStyles.boldLabel);
+                        if (changedProperties["Transform_initialpos"] != null)
+                        {
+                            var pos = changedProperties["Transform_initialpos"] as JObject;
+
+                            string xValue = pos["x"]?.ToString();
+                            string yValue = pos["y"]?.ToString();
+                            string zValue = pos["z"]?.ToString();
+
+                            xValue = EditorGUILayout.TextField("x: ", xValue);
+                            yValue = EditorGUILayout.TextField("y: ", yValue);
+                            zValue = EditorGUILayout.TextField("z: ", zValue);
+
+                            pos["x"] = xValue;
+                            pos["y"] = yValue;
+                            pos["z"] = zValue;
+
+                            changedProperties["Transform_initialpos"] = pos;
+                        }
+                    }
                     actionResponse.trigger_event.change_property_by = changedProperties;
                 }
             }
@@ -777,6 +853,37 @@ public class MainMenu : EditorWindow
                         }
                     }
                     actionResponse.response_event.force = forceParameters;
+                }
+
+                if (actionResponse.response_event.response == "change")
+                {
+                    var changedProperties = actionResponse.trigger_event.change_property_by as JObject;
+                    if (changedProperties != null)
+                    {
+                        if (changedProperties.ContainsKey("Transform_initialpos"))
+                        {
+                            EditorGUILayout.LabelField("Place Object On", EditorStyles.boldLabel);
+                            if (changedProperties["Transform_initialpos"] != null)
+                            {
+                                var pos = changedProperties["Transform_initialpos"] as JObject;
+
+                                string xValue = pos["x"]?.ToString();
+                                string yValue = pos["y"]?.ToString();
+                                string zValue = pos["z"]?.ToString();
+
+                                xValue = EditorGUILayout.TextField("x: ", xValue);
+                                yValue = EditorGUILayout.TextField("y: ", yValue);
+                                zValue = EditorGUILayout.TextField("z: ", zValue);
+
+                                pos["x"] = xValue;
+                                pos["y"] = yValue;
+                                pos["z"] = zValue;
+
+                                changedProperties["Transform_initialpos"] = pos;
+                            }
+                        }
+                        actionResponse.response_event.change_property_by = changedProperties;
+                    }
                 }
             }
 

@@ -18,7 +18,7 @@
         "response": "force",
         "change_property_by": null,
         "force": {
-          "force_x": "45",
+          "force_x": "30",
           "force_y": "0",
           "force_z": "0",
           "type": "impulse"
@@ -281,22 +281,32 @@
       "Syncronous": null
     },
     {
-      "actresid": null,
+      "actresid": "reset",
       "trigger_event": {
         "sourceObj": "Ball",
         "IsCollision": "false",
-        "action": "none",
-        "change_property_by": "none",
+        "action": "change",
+        "change_property_by": {
+          "Transform_initialpos": {
+            "y": "-5.0"
+          }
+        },
         "force": null,
         "disappear": null,
         "inputType": "none",
         "repeatactionfor": null
       },
       "response_event": {
-        "targetObj": "none",
+        "targetObj": "Ball",
         "IsCollision": "false",
-        "response": "none",
-        "change_property_by": null,
+        "response": "change",
+        "change_property_by": {
+          "Transform_initialpos": {
+            "x": "0.0",
+            "y": "0.5",
+            "z": "0.0"
+          } 
+        },
         "force": "none",
         "disappear": null,
         "outputType": null,
@@ -607,41 +617,6 @@
         "IsCollision": "false",
         "response": "disappear",
         "change_property_by": null,
-        "force": "none",
-        "disappear": null,
-        "outputType": null,
-        "repeatactionfor": null
-      },
-      "comment": null,
-      "Syncronous": null
-    },
-    {
-      "actresid": "reset",
-      "trigger_event": {
-        "sourceObj": "Ball",
-        "IsCollision": "false",
-        "action": "change",
-        "change_property_by": {
-          "Transform_initialpos": {
-            "y": "-5.0"
-          }
-        },
-        "force": null,
-        "disappear": null,
-        "inputType": "none",
-        "repeatactionfor": null
-      },
-      "response_event": {
-        "targetObj": "Ball",
-        "IsCollision": "false",
-        "response": "change",
-        "change_property_by": {
-          "Transform_initialpos": {
-            "x": "0.0",
-            "y": "0.5",
-            "z": "0.0"
-          } 
-        },
         "force": "none",
         "disappear": null,
         "outputType": null,

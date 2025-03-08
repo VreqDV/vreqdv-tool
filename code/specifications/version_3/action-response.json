@@ -192,7 +192,7 @@
       "Syncronous": null
     },
     {
-      "actresid": "ghost_disappear",
+      "actresid": "gjost_disappear",
       "trigger_event": {
         "sourceObj": "Pin_1",
         "IsCollision": null,

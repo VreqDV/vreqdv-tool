@@ -154,6 +154,7 @@ public class ResponseEvent
     public string targetObj;
     public string IsCollision;
     public string response;
+    public object change_property_by;
     public object force;
     public string disappear;
     public string outputType;
