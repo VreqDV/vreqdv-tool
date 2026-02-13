@@ -1,0 +1,14 @@
+{
+	"behavior":[
+	{
+		"bid":"",
+		"bname":"",
+		"bdescription":"",
+		"articlesused":"",
+		"logic":""
+	}
+	],
+	
+	"borderasync": "",
+	"bordersync": ""
+}

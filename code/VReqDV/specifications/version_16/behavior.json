@@ -1,0 +1,46 @@
+{
+    "behaviors": [
+        {
+            "id": "BoxActivate",
+            "event": "OnCondition",
+            "source": "Box",
+            "precondition": {
+                "all": [
+                    {
+                        "equals": [
+                            "Box.state",
+                            "idle"
+                        ]
+                    },
+                    {
+                        "runAlgorithm": "IsBoxClicked"
+                    }
+                ]
+            },
+            "action": {
+                "runAlgorithm": "SetBoxActive"
+            },
+            "postcondition": {
+                "equals": [
+                    "Box.state",
+                    "active"
+                ]
+            }
+        },
+        {
+            "id": "BoxColorChange",
+            "event": "OnStateChange",
+            "source": "Box",
+            "precondition": {
+                "equals": [
+                    "Box.state",
+                    "active"
+                ]
+            },
+            "action": {
+                "runAlgorithm": "ChangeBoxColor"
+            },
+            "postcondition": null
+        }
+    ]
+}

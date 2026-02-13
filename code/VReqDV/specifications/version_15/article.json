@@ -1,0 +1,146 @@
+{
+    "articles": [
+        {
+            "_objectname": "Ball",
+            "_sid": null,
+            "_slabel": null,
+            "HasChild": 0,
+            "Children": null,
+            "shape": "Sphere",
+            "Transform_initialpos": {
+                "x": "-6",
+                "y": "0.5",
+                "z": "0.0"
+            },
+            "Transform_initialrotation": {
+                "x": "0.0",
+                "y": "0.0",
+                "z": "0.0"
+            },
+            "Transform_objectscale": {
+                "x": "1.0",
+                "y": "1.0",
+                "z": "1.0"
+            },
+            "XRRigidObject": {
+                "value": "1",
+                "mass": "1.0",
+                "dragfriction": "0.0",
+                "angulardrag": "0.0",
+                "Isgravityenable": "true",
+                "IsKinematic": "false",
+                "CanInterpolate": "0",
+                "CollisionPolling": "discrete"
+            },
+            "states": [
+                "ready",
+                "rolling"
+            ],
+            "context_img_source": null
+        },
+        {
+            "_objectname": "Pin_1",
+            "_sid": null,
+            "_slabel": null,
+            "HasChild": 0,
+            "Children": null,
+            "shape": "Capsule",
+            "Transform_initialpos": {
+                "x": "5.0",
+                "y": "0.5",
+                "z": "0"
+            },
+            "Transform_initialrotation": {
+                "x": "0.0",
+                "y": "0.0",
+                "z": "0.0"
+            },
+            "Transform_objectscale": {
+                "x": "0.2",
+                "y": "0.5",
+                "z": "0.2"
+            },
+            "XRRigidObject": {
+                "value": "1",
+                "mass": "1.0",
+                "dragfriction": "0.0",
+                "angulardrag": "0.0",
+                "Isgravityenable": "true",
+                "IsKinematic": "false",
+                "CanInterpolate": "0",
+                "CollisionPolling": "discrete"
+            },
+            "states": [
+                "standing",
+                "fallen"
+            ],
+            "context_img_source": null
+        },
+        {
+            "_objectname": "Pin_2",
+            "_sid": null,
+            "_slabel": null,
+            "HasChild": 0,
+            "Children": null,
+            "source": "Pin_1",
+            "Transform_initialpos": {
+                "x": "5.5",
+                "y": "0.5",
+                "z": "0.8"
+            }
+        },
+        {
+            "_objectname": "Pin_3",
+            "_sid": null,
+            "_slabel": null,
+            "HasChild": 0,
+            "Children": null,
+            "source": "Pin_1",
+            "Transform_initialpos": {
+                "x": "5.5",
+                "y": "0.5",
+                "z": "-0.8"
+            }
+        },
+        {
+            "_objectname": "Plane",
+            "_sid": null,
+            "_slabel": null,
+            "_IsHidden": 0,
+            "_enumcount": 0,
+            "_Is3DObject": 0,
+            "HasChild": 0,
+            "Children": null,
+            "shape": "Cube",
+            "Transform_initialpos": {
+                "x": "0.0",
+                "y": "0.0",
+                "z": "0.0"
+            },
+            "Transform_initialrotation": {
+                "x": "0.0",
+                "y": "0.0",
+                "z": "0.0"
+            },
+            "Transform_objectscale": {
+                "x": "20.0",
+                "y": "0.1",
+                "z": "5.0"
+            },
+            "XRRigidObject": {
+                "value": "0",
+                "mass": "0",
+                "dragfriction": "0",
+                "angulardrag": "0",
+                "Isgravityenable": "false",
+                "IsKinematic": "false",
+                "CanInterpolate": "0",
+                "CollisionPolling": "none"
+            },
+            "states": [
+                "ready"
+            ],
+            "context_img_source": null
+        }
+    ]
+}
