@@ -1,0 +1,163 @@
+{
+    "behaviors": [
+        {
+            "id": "BallClickToRoll",
+            "event": "OnCondition",
+            "actors": [
+                "Ball"
+            ],
+            "precondition": {
+                "all": [
+                    {
+                        "equals": [
+                            "Self.state",
+                            "ready"
+                        ]
+                    },
+                    {
+                        "runAlgorithm": "IsBallClicked"
+                    }
+                ]
+            },
+            "action": {
+                "runAlgorithm": "RollBall"
+            },
+            "postcondition": {
+                "equals": [
+                    "Self.state",
+                    "rolling"
+                ]
+            }
+        },
+        {
+            "id": "BallStopAtEnd",
+            "event": "OnCondition",
+            "actors": [
+                "Ball"
+            ],
+            "precondition": {
+                "all": [
+                    {
+                        "equals": [
+                            "Self.state",
+                            "rolling"
+                        ]
+                    },
+                    {
+                        "runAlgorithm": "HasBallReachedEnd"
+                    }
+                ]
+            },
+            "action": {
+                "runAlgorithm": "StopAndResetBall"
+            },
+            "postcondition": {
+                "equals": [
+                    "Self.state",
+                    "ready"
+                ]
+            }
+        },
+        {
+            "id": "PinFall",
+            "event": "OnCondition",
+            "actors": [
+                "Pin_1"
+            ],
+            "precondition": {
+                "all": [
+                    {
+                        "equals": [
+                            "Self.state",
+                            "standing"
+                        ]
+                    },
+                    {
+                        "runAlgorithm": "IsPinFallen",
+                        "params": {
+                            "obj": "Self"
+                        }
+                    }
+                ]
+            },
+            "action": {
+                "runAlgorithm": "SetPinFallen",
+                "params": {
+                    "obj": "Self"
+                }
+            },
+            "postcondition": {
+                "equals": [
+                    "Self.state",
+                    "fallen"
+                ]
+            }
+        },
+        {
+            "id": "PinReset",
+            "event": "OnCondition",
+            "actors": [
+                "Pin_1"
+            ],
+            "precondition": {
+                "all": [
+                    {
+                        "equals": [
+                            "Self.state",
+                            "fallen"
+                        ]
+                    },
+                    {
+                        "equals": [
+                            "Pin_2.state",
+                            "fallen"
+                        ]
+                    },
+                    {
+                        "equals": [
+                            "Pin_3.state",
+                            "fallen"
+                        ]
+                    },
+                    {
+                        "equals": [
+                            "Ball.state",
+                            "ready"
+                        ]
+                    }
+                ]
+            },
+            "action": {
+                "runAlgorithm": "ResetBallAndPins"
+            },
+            "postcondition": {
+                "all": [
+                    {
+                        "equals": [
+                            "Self.state",
+                            "standing"
+                        ]
+                    },
+                    {
+                        "equals": [
+                            "Pin_2.state",
+                            "standing"
+                        ]
+                    },
+                    {
+                        "equals": [
+                            "Pin_3.state",
+                            "standing"
+                        ]
+                    },
+                    {
+                        "equals": [
+                            "Ball.state",
+                            "ready"
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}

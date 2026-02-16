@@ -45,21 +45,4 @@ public class CompareHandler
 
         Debug.Log($"Comparison scene created for versions {v1} and {v2}.");
     }
-
-    // public static void ComparisonNewScene(int v2)
-    // {
-    //     var newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-    //     EditorSceneManager.SetActiveScene(newScene);
-
-    //     string[] prefabPaths2 = AssetDatabase.FindAssets("t:Prefab", new string[] { $"Assets/ScenePrefabs/version_{v2}" });
-
-    //     foreach (string prefabPath in prefabPaths2)
-    //     {
-    //         string path = AssetDatabase.GUIDToAssetPath(prefabPath);
-    //         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-    //         PrefabUtility.InstantiatePrefab(prefab);
-    //     }
-
-    //     Debug.Log($"New scene created for version {v2}.");
-    // }
 }

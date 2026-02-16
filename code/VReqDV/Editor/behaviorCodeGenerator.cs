@@ -24,39 +24,81 @@ public static class BehaviorCodeGenerator
 
         foreach (var rule in behaviorRules.behaviors)
         {
-            finalRules.Add(rule);
-
-            // Expand inherited behaviors
-            if (inheritanceMap != null && inheritanceMap.ContainsKey(rule.Source))
+            // Hybrid Inheritance & Actor Expansion
+            // 1. Start with explicit actors
+            HashSet<string> targetActors = new HashSet<string>();
+            if (rule.Actors != null)
             {
-                foreach (string derivedObj in inheritanceMap[rule.Source])
-                {
-                    BehaviorRule newRule = DeepCopyRule(rule);
-                    newRule.Id = rule.Id + "_" + derivedObj;
-                    newRule.Source = derivedObj;
-                    
-                    // Recursive string replacement
-                    ReplaceParams(newRule.Precondition, rule.Source, derivedObj);
-                    ReplaceParams(newRule.Action, rule.Source, derivedObj);
-                    if (newRule.Postcondition != null)
-                    {
-                        ReplaceParams(newRule.Postcondition, rule.Source, derivedObj);
-                    }
+                foreach(var actor in rule.Actors) targetActors.Add(actor);
+            }
+            // Fallback for legacy JSONs that might still use "source" (though we mapped it, Classes.cs handles the reverse mapping if we really wanted to, but let's trust Actors list for now)
 
-                    finalRules.Add(newRule);
+            // 2. Expand via Inheritance Map (Implicit)
+            // If any of the targetActors have children in the inheritance map, add them too.
+            // We iterate a copy of the list so we can modify the HashSet
+            var initialActors = new List<string>(targetActors);
+            if (inheritanceMap != null)
+            {
+                foreach (var actor in initialActors)
+                {
+                    if (inheritanceMap.ContainsKey(actor))
+                    {
+                        foreach (string derivedObj in inheritanceMap[actor])
+                        {
+                            targetActors.Add(derivedObj);
+                        }
+                    }
                 }
+            }
+
+            // 3. Generate for each Unique Actor
+            foreach (string actorName in targetActors)
+            {
+                BehaviorRule newRule = DeepCopyRule(rule);
+                
+                // Append ActorName to ID to avoid collision if multiple actors use same behavior template
+                
+                newRule.Id = rule.Id + "_" + actorName;
+                newRule.Source = actorName; // This sets the Actors[0] too due to our compat property, but mainly for logic usage
+                
+                // 4. Smart Substitution
+                // Replace "Self" -> actorName
+                ReplaceParams(newRule.Precondition, "Self", actorName);
+                ReplaceParams(newRule.Action, "Self", actorName);
+                if (newRule.Postcondition != null) ReplaceParams(newRule.Postcondition, "Self", actorName);
+
+                // Legacy Substitution: Replace the "Primary Source" (first actor in definitions) with current actorName
+                // This handles cases where user wrote "Pin_1" explicitly in the condition but meant "Self" (implicit self).
+                // Only do this if we are not processing the primary source itself (though replacing string with same string is harmless).
+                string primarySource = (rule.Actors != null && rule.Actors.Count > 0) ? rule.Actors[0] : null;
+                if (!string.IsNullOrEmpty(primarySource))
+                {
+                     ReplaceParams(newRule.Precondition, primarySource, actorName);
+                     ReplaceParams(newRule.Action, primarySource, actorName);
+                     if (newRule.Postcondition != null) ReplaceParams(newRule.Postcondition, primarySource, actorName);
+                }
+
+                finalRules.Add(newRule);
             }
         }
         
         // Update the list with expanded rules
         behaviorRules.behaviors = finalRules;
 
+        // Create/Clear target directory
+        string targetDir = "Assets/VReqDV/Generated/Behaviors/" + version;
+        if (Directory.Exists(targetDir))
+        {
+            Directory.Delete(targetDir, true);
+        }
+        Directory.CreateDirectory(targetDir);
+
         foreach (var rule in behaviorRules.behaviors)
         {
-            GenerateBehavior(rule, "Assets/VReqDV/Generated/Behaviors/" + version, version);
+            GenerateBehavior(rule, targetDir, version);
         }
         
-        GenerateLoader(behaviorRules, "Assets/VReqDV/Generated/Behaviors/" + version, version);
+        // GenerateLoader(behaviorRules, "Assets/VReqDV/Generated/Behaviors/" + version, version);
 
 #if UNITY_EDITOR
         AssetDatabase.Refresh();
@@ -263,59 +305,4 @@ public static class BehaviorCodeGenerator
         return char.ToUpper(value[0]) + value.Substring(1);
     }
 
-    public static void GenerateLoader(BehaviorList list, string outputFolder, string version)
-    {
-        var sb = new StringBuilder();
-
-        sb.AppendLine("// GENERATED FILE — DO NOT EDIT");
-        sb.AppendLine("using UnityEngine;");
-        sb.AppendLine();
-        sb.AppendLine($"public static class BehaviorLoader_{version}");
-        sb.AppendLine("{");
-        sb.AppendLine("    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]");
-        sb.AppendLine("    public static void AttachBehaviors()");
-        sb.AppendLine("    {");
-
-        foreach (var rule in list.behaviors)
-        {
-            // Attach("...", typeof(Version_XX.BehaviorName))
-            sb.AppendLine($"        Attach(\"{rule.Source}\", typeof({version}.{rule.Id}));");
-            // Also attach the Initializer if it exists. Initializers are likely global since they handle state storage which might be shared or versioned?
-            // Assuming StateAPI logic is global for now (User didn't ask to namespace that).
-            // But if StateStorage is global, there's only one state for "Ball".
-            // Since we are namespacing behavior, we'll just attach the Initializer by name.
-            string initializerName = rule.Source + "Initializer";
-            sb.AppendLine($"        AttachInitializer(\"{rule.Source}\", \"{version}.{initializerName}\");");
-        }
-
-        sb.AppendLine("    }");
-        sb.AppendLine();
-        sb.AppendLine("    private static void Attach(string objName, System.Type type)");
-        sb.AppendLine("    {");
-        sb.AppendLine("        GameObject obj = GameObject.Find(objName);");
-        sb.AppendLine("        if (obj != null)");
-        sb.AppendLine("        {");
-        sb.AppendLine("            if (obj.GetComponent(type) == null)");
-        sb.AppendLine("            {");
-        sb.AppendLine("                obj.AddComponent(type);");
-        sb.AppendLine("            }");
-        sb.AppendLine("        }");
-        sb.AppendLine("    }");
-        sb.AppendLine();
-        sb.AppendLine("    private static void AttachInitializer(string objName, string typeName)");
-        sb.AppendLine("    {");
-        sb.AppendLine("        GameObject obj = GameObject.Find(objName);");
-        sb.AppendLine("        if (obj != null)");
-        sb.AppendLine("        {");
-        sb.AppendLine("            System.Type type = System.Type.GetType(typeName);");
-        sb.AppendLine("            if (type != null && obj.GetComponent(type) == null)");
-        sb.AppendLine("            {");
-        sb.AppendLine("                obj.AddComponent(type);");
-        sb.AppendLine("            }");
-        sb.AppendLine("        }");
-        sb.AppendLine("    }");
-        sb.AppendLine("}");
-
-        File.WriteAllText(Path.Combine(outputFolder, $"BehaviorLoader_{version}.cs"), sb.ToString());
-    }
 }

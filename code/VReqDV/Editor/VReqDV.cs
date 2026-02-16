@@ -22,20 +22,17 @@ public class MainMenu : EditorWindow
 
     public BehaviorList behaviorSpecifications;
     private ArticleList objectSpecifications;
-    private ActionResponseList actionSpecifications;
+    public BehaviorList compareBehaviorSpecifications;
     private ArticleList compareObjectSpecifications;
-    private ActionResponseList compareActionSpecifications;
-    // private ActionResponseData actionSpecifications;
 
     private Vector2 scrollPositionObject;
     private Vector2 scrollPositionObjectCompare;
 
-    // private static int total_versions = screenState.total_versions;
     private int selected_display_component = 0;
     private string[] version_list;
     private static string[] versionSpecs;
     private int compare_version = 0;
-    private bool editingEnabled = false;
+    private bool editingEnabled = true;
 
     private void Initialize()
     {
@@ -46,7 +43,6 @@ public class MainMenu : EditorWindow
         for (int i = 1; i <= screenState.total_versions; i++)
         {
             version_list[i] = i.ToString();
-            // version_list.Add(i);
         }
     }
 
@@ -75,7 +71,7 @@ public class MainMenu : EditorWindow
             {
                 screenState.total_versions++;
                 screenState.curr_version = screenState.total_versions;
-                SaveVersion(screenState.curr_version);
+                SaveVersion(-1, screenState.curr_version);
                 SaveSceneToPrefab(screenState.curr_version);
                 window.Repaint();
             }
@@ -91,30 +87,30 @@ public class MainMenu : EditorWindow
             if(GUILayout.Button("Save New Version", GUILayout.Width(200)))
             {
                 screenState.total_versions++;
+                SaveVersion(screenState.curr_version, screenState.total_versions);
                 screenState.curr_version = screenState.total_versions;
-                SaveVersion(screenState.curr_version);
                 SaveSceneToPrefab(screenState.curr_version);
                 window.Repaint();
             }
             if(GUILayout.Button("Save to Current Version", GUILayout.Width(200)))
             {
-                SaveVersion(screenState.curr_version);
+                SaveVersion(screenState.curr_version, screenState.curr_version);
                 SaveSceneToPrefab(screenState.curr_version);
                 window.Repaint();
             }
             GUILayout.EndHorizontal();
 
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Editing Enabled: " + editingEnabled, setFont(14));
-            GUILayout.Label("NOTE: If editing is enabled, compare versions will not work!", setFont(14), GUILayout.Width(750));
-            if(GUILayout.Button("Enable/Disable Form Editing", GUILayout.Width(200)))
-            {
-                editingEnabled = !editingEnabled;
-            }
-            GUILayout.EndHorizontal();
+            // GUILayout.BeginHorizontal();
+            // GUILayout.Label("Editing Enabled: " + editingEnabled, setFont(14));
+            // GUILayout.Label("NOTE: If editing is enabled, compare versions will not work!", setFont(14), GUILayout.Width(750));
+            // if(GUILayout.Button("Enable/Disable Form Editing", GUILayout.Width(200)))
+            // {
+            //     editingEnabled = !editingEnabled;
+            // }
+            // GUILayout.EndHorizontal();
 
-            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            // EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Change Current Version:", setFont(12));
@@ -132,16 +128,12 @@ public class MainMenu : EditorWindow
             
             compare_version = EditorGUILayout.Popup(compare_version, version_list, GUILayout.Width(100));
 
-            EditorGUI.BeginDisabledGroup(editingEnabled);
-            if(GUILayout.Button("Display Comparison", GUILayout.Width(200)))
-            {
-                CompareHandler.ComparisonSideBySide(screenState.curr_version, compare_version);
-            }
-            // if(GUILayout.Button("Open in New Scene", GUILayout.Width(200)))
+            // EditorGUI.BeginDisabledGroup(editingEnabled);
+            // if(GUILayout.Button("Display Comparison", GUILayout.Width(200)))
             // {
-            //     OpenNewScene();
+            //     CompareHandler.ComparisonSideBySide(screenState.curr_version, compare_version);
             // }
-            EditorGUI.EndDisabledGroup();
+            // EditorGUI.EndDisabledGroup();
             GUILayout.EndHorizontal();
 
             try
@@ -161,17 +153,17 @@ public class MainMenu : EditorWindow
 
             try
             {
-                string file = "Assets/VReqDV/specifications/version_" + screenState.curr_version + "/action-response.json";
-                string actionData = File.ReadAllText(file);
-                actionSpecifications = JsonConvert.DeserializeObject<ActionResponseList>(actionData);
+                string file = "Assets/VReqDV/specifications/version_" + screenState.curr_version + "/behavior.json";
+                string behaviorData = File.ReadAllText(file);
+                behaviorSpecifications = JsonConvert.DeserializeObject<BehaviorList>(behaviorData);
             }
             catch (FileNotFoundException)
             {
-                actionSpecifications = new ActionResponseList { ObjAction = new List<ActionResponse> { new ActionResponse { actresid = "Error - File not found" } } };
+                behaviorSpecifications = new BehaviorList { behaviors = new List<BehaviorRule> { new BehaviorRule { Id = "Error - File not found" } } };
             }
             catch (JsonException)
             {
-                actionSpecifications = new ActionResponseList { ObjAction = new List<ActionResponse> { new ActionResponse { actresid = "Error - Failed to parse JSON" } } };
+                behaviorSpecifications = new BehaviorList { behaviors = new List<BehaviorRule> { new BehaviorRule { Id = "Error - Failed to parse JSON" } } };
             }
 
             if (compare_version != 0)
@@ -193,41 +185,40 @@ public class MainMenu : EditorWindow
 
                 try
                 {
-                    string file = "Assets/VReqDV/specifications/version_" + compare_version + "/action-response.json";
-                    string actionData = File.ReadAllText(file);
-                    compareActionSpecifications = JsonConvert.DeserializeObject<ActionResponseList>(actionData);
+                    string file = "Assets/VReqDV/specifications/version_" + compare_version + "/behavior.json";
+                    string behaviorData = File.ReadAllText(file);
+                    compareBehaviorSpecifications = JsonConvert.DeserializeObject<BehaviorList>(behaviorData);
                 }
                 catch (FileNotFoundException)
                 {
-                    compareActionSpecifications = new ActionResponseList { ObjAction = new List<ActionResponse> { new ActionResponse { actresid = "Error - File not found" } } };
+                    compareBehaviorSpecifications = new BehaviorList { behaviors = new List<BehaviorRule> { new BehaviorRule { Id = "Error - File not found" } } };
                 }
                 catch (JsonException)
                 {
-                    compareActionSpecifications = new ActionResponseList { ObjAction = new List<ActionResponse> { new ActionResponse { actresid = "Error - Failed to parse JSON" } } };
+                    compareBehaviorSpecifications = new BehaviorList { behaviors = new List<BehaviorRule> { new BehaviorRule { Id = "Error - Failed to parse JSON" } } };
                 }
             }
 
-            string[] list = new string[] { "Assets", "Actions" };
-            // int selected_display_component = 0;
+            string[] list = new string[] { "Articles", "Behaviors" };
             selected_display_component = EditorGUILayout.Popup("Select Component", selected_display_component, list);
 
             GUILayout.BeginHorizontal();
 
             // Scrollable area for object data
-            scrollPositionObject = EditorGUILayout.BeginScrollView(scrollPositionObject, GUILayout.Height(position.height - 110), GUILayout.Width(position.width / 2));
+            scrollPositionObject = EditorGUILayout.BeginScrollView(scrollPositionObject, GUILayout.Height(position.height - 80), GUILayout.Width(position.width / 2));
 
             if (objectSpecifications != null && objectSpecifications.articles != null)
             {
-                if (list[selected_display_component] == "Assets")
+                if (list[selected_display_component] == "Articles")
                 {
                     DisplayArticleForm(objectSpecifications.articles, screenState.curr_version);
                 }
             }
-            if (actionSpecifications != null && actionSpecifications.ObjAction != null)
+            if (behaviorSpecifications != null && behaviorSpecifications.behaviors != null)
             {
-                if (list[selected_display_component] == "Actions")
+                if (list[selected_display_component] == "Behaviors")
                 {
-                    DisplayActionForm(actionSpecifications.ObjAction, screenState.curr_version);
+                    DisplayBehaviorForm(behaviorSpecifications.behaviors, screenState.curr_version);
                 }
             }
             EditorGUILayout.EndScrollView();
@@ -235,17 +226,17 @@ public class MainMenu : EditorWindow
             // compare with
             if (compare_version != 0)
             {
-                scrollPositionObjectCompare = EditorGUILayout.BeginScrollView(scrollPositionObjectCompare, GUILayout.Height(position.height - 110), GUILayout.Width(position.width / 2));
+                scrollPositionObjectCompare = EditorGUILayout.BeginScrollView(scrollPositionObjectCompare, GUILayout.Height(position.height - 80), GUILayout.Width(position.width / 2));
 
                 if (compareObjectSpecifications != null && compareObjectSpecifications.articles != null)
                 {
-                    if (list[selected_display_component] == "Assets")
+                    if (list[selected_display_component] == "Articles")
                         DisplayArticleForm(compareObjectSpecifications.articles, compare_version);
                 }
-                if (compareActionSpecifications != null && compareActionSpecifications.ObjAction != null)
+                if (compareBehaviorSpecifications != null && compareBehaviorSpecifications.behaviors != null)
                 {
-                    if (list[selected_display_component] == "Actions")
-                        DisplayActionForm(compareActionSpecifications.ObjAction, compare_version);
+                    if (list[selected_display_component] == "Behaviors")
+                        DisplayBehaviorForm(compareBehaviorSpecifications.behaviors, compare_version);
                 }
                 EditorGUILayout.EndScrollView();
             }
@@ -254,11 +245,8 @@ public class MainMenu : EditorWindow
             if (editingEnabled && GUI.changed)
             {
                 string json1 = JsonConvert.SerializeObject(objectSpecifications, Formatting.Indented);
-                string json2 = JsonConvert.SerializeObject(actionSpecifications, Formatting.Indented);
                 string filePath1 = $"Assets/VReqDV/specifications/version_{screenState.curr_version}/article.json";
-                string filePath2 = $"Assets/VReqDV/specifications/version_{screenState.curr_version}/action-response.json";
                 File.WriteAllText(filePath1, json1);
-                File.WriteAllText(filePath2, json2);
                 AssetDatabase.Refresh();
                 ClearObjects();
                 OpenScene(screenState.curr_version);
@@ -273,7 +261,10 @@ public class MainMenu : EditorWindow
         if (Directory.Exists(folder_path))
         {
             var inheritanceMap = ObjectHandler.CreateObjects(folder_path);
-            // ActionHandler.CreateActions(folder_path);
+            
+            // Flag for BehaviorAttacher to pick up after compilation
+            EditorPrefs.SetString("VReqDV_PendingVersion", version_no.ToString());
+            
             BehaviorCodeGenerator.CreateBehaviors(folder_path, inheritanceMap);
         }
         else
@@ -337,12 +328,10 @@ public class MainMenu : EditorWindow
     
     private void DisplayArticleForm(List<Article> articles, int ver_no)
     {
-        GUILayout.Label("Assets Specifications - Version " + ver_no, EditorStyles.boldLabel);
+        GUILayout.Label("Articles Specifications - Version " + ver_no, EditorStyles.boldLabel);
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-        // Debug.Log(articles[0].);
         foreach (var article in articles)
         {
-            // Debug.Log("yes");
             if (article._objectname == "Main Camera" || article._objectname == "Directional Light")
                 continue;
 
@@ -402,505 +391,233 @@ public class MainMenu : EditorWindow
                 article.XRRigidObject.CollisionPolling = EditorGUILayout.TextField("Collision Detection ", article.XRRigidObject.CollisionPolling);
             }
 
-            // Other fields...
-
-            // Handle nested objects similarly
 
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-
-            // ActionResponse a = new ActionResponse();
         }
     }
 
-    private void DisplayActionForm(List<ActionResponse> actions, int version)
+    private void DisplayBehaviorForm(List<BehaviorRule> behaviors, int version)
     {
-        GUILayout.Label("Action-Response Specifications - Version " + version, EditorStyles.boldLabel);
+        GUILayout.Label("Behavior Specifications - Version " + version, EditorStyles.boldLabel);
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-        foreach (var actionResponse in actions)
+        foreach (var rule in behaviors)
         {
-            EditorGUILayout.LabelField("ActResID: ", actionResponse.actresid, EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("ID: ", rule.Id, EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Event: ", rule.Event);
+            EditorGUILayout.LabelField("Source: ", rule.Source);
 
-            actionResponse.comment = EditorGUILayout.TextField("Comment: ", actionResponse.comment);
-            actionResponse.Syncronous = EditorGUILayout.TextField("Syncronous: ", actionResponse.Syncronous);
-
-            if (actionResponse.trigger_event != null)
+            if (rule.Precondition != null)
             {
-                EditorGUILayout.LabelField("Trigger Event", EditorStyles.boldLabel);
-                actionResponse.trigger_event.sourceObj = EditorGUILayout.TextField("Source Object: ", actionResponse.trigger_event.sourceObj);
-                actionResponse.trigger_event.IsCollision = EditorGUILayout.TextField("Is Collision: ", actionResponse.trigger_event.IsCollision);
-                actionResponse.trigger_event.action = EditorGUILayout.TextField("Action: ", actionResponse.trigger_event.action);
-                actionResponse.trigger_event.inputType = EditorGUILayout.TextField("Input Type: ", actionResponse.trigger_event.inputType);
+                EditorGUILayout.LabelField("Precondition:", EditorStyles.boldLabel);
+                DisplayConditionNode(rule.Precondition);
+            }
 
-                var changedProperties = actionResponse.trigger_event.change_property_by as JObject;
-                if (changedProperties != null)
+            if (rule.Action != null)
+            {
+                EditorGUILayout.LabelField("Action:", EditorStyles.boldLabel);
+                EditorGUILayout.LabelField("Algorithm: ", rule.Action.runAlgorithm);
+                if (rule.Action.@params != null)
                 {
-                    if (changedProperties.ContainsKey("Transform_initialrotation"))
+                    foreach (var param in rule.Action.@params)
                     {
-                        EditorGUILayout.LabelField("Change in Angle", EditorStyles.boldLabel);
-                        if (changedProperties["Transform_initialrotation"] != null)
-                        {
-                            var angles = changedProperties["Transform_initialrotation"] as JObject;
-
-                            string xValue = angles["x"]?.ToString();
-                            string yValue = angles["y"]?.ToString();
-                            string zValue = angles["z"]?.ToString();
-
-                            xValue = EditorGUILayout.TextField("x: ", xValue);
-                            yValue = EditorGUILayout.TextField("y: ", yValue);
-                            zValue = EditorGUILayout.TextField("z: ", zValue);
-
-                            angles["x"] = xValue;
-                            angles["y"] = yValue;
-                            angles["z"] = zValue;
-
-                            changedProperties["Transform_initialrotation"] = angles;
-                        }
+                        EditorGUILayout.LabelField($"  {param.Key}: ", param.Value);
                     }
-
-                    if (changedProperties.ContainsKey("Transform_intitialpos"))
-                    {
-                        EditorGUILayout.LabelField("Change in Position", EditorStyles.boldLabel);
-                        if (changedProperties["Transform_initialpos"] != null)
-                        {
-                            var pos = changedProperties["Transform_initialpos"] as JObject;
-
-                            string xValue = pos["x"]?.ToString();
-                            string yValue = pos["y"]?.ToString();
-                            string zValue = pos["z"]?.ToString();
-
-                            xValue = EditorGUILayout.TextField("x: ", xValue);
-                            yValue = EditorGUILayout.TextField("y: ", yValue);
-                            zValue = EditorGUILayout.TextField("z: ", zValue);
-
-                            pos["x"] = xValue;
-                            pos["y"] = yValue;
-                            pos["z"] = zValue;
-
-                            changedProperties["Transform_initialpos"] = pos;
-                        }
-                    }
-                    actionResponse.trigger_event.change_property_by = changedProperties;
                 }
             }
 
-            if (actionResponse.response_event != null)
+            if (rule.Postcondition != null)
             {
-                EditorGUILayout.LabelField("Response Event", EditorStyles.boldLabel);
-                actionResponse.response_event.targetObj = EditorGUILayout.TextField("Target Object: ", actionResponse.response_event.targetObj);
-                actionResponse.response_event.IsCollision = EditorGUILayout.TextField("Is Collision: ", actionResponse.response_event.IsCollision);
-                actionResponse.response_event.response = EditorGUILayout.TextField("Response: ", actionResponse.response_event.response);
-                actionResponse.response_event.outputType = EditorGUILayout.TextField("Output Type: ", actionResponse.response_event.outputType);
-                if(actionResponse.response_event.response == "force")
-                {
-                    var forceParameters = actionResponse.response_event.force as JObject;
-                    EditorGUILayout.LabelField("Force Parameters", EditorStyles.boldLabel);
-                    if(forceParameters != null)
-                    {
-                        if(forceParameters.ContainsKey("force_x"))
-                        {
-                            string xforce = forceParameters["force_x"]?.ToString();
-                            xforce = EditorGUILayout.TextField("Force in x: ", xforce);
-                            forceParameters["force_x"] = xforce;
-                        }
-                        else
-                        {
-                            string xforce = "0";
-                            xforce = EditorGUILayout.TextField("Force in x: ", xforce);
-                        }
-                        if(forceParameters.ContainsKey("force_y"))
-                        {
-                            string yforce = forceParameters["force_y"]?.ToString();
-                            yforce = EditorGUILayout.TextField("Force in y: ", yforce);
-                            forceParameters["force_y"] = yforce;
-                        }
-                        else
-                        {
-                            string yforce = "0";
-                            yforce = EditorGUILayout.TextField("Force in y: ", yforce);
-                        }
-                        if(forceParameters.ContainsKey("force_z"))
-                        {
-                            string zforce = forceParameters["force_z"]?.ToString();
-                            zforce = EditorGUILayout.TextField("Force in z: ", zforce);
-                            forceParameters["force_z"] = zforce;
-                        }
-                        else
-                        {
-                            string zforce = "0";
-                            zforce = EditorGUILayout.TextField("Force in z: ", zforce);
-                        }
-                        if(forceParameters.ContainsKey("type") && forceParameters["type"] != null)
-                        {
-                            string forceType = forceParameters["type"]?.ToString();
-                            forceType = EditorGUILayout.TextField("Type: ", forceType);
-                        }
-                        else
-                        {
-                            string forceType = "impulse";
-                            forceType = EditorGUILayout.TextField("Type: ", forceType);
-                        }
-                    }
-                    actionResponse.response_event.force = forceParameters;
-                }
-
-                if (actionResponse.response_event.response == "change")
-                {
-                    var changedProperties = actionResponse.trigger_event.change_property_by as JObject;
-                    if (changedProperties != null)
-                    {
-                        if (changedProperties.ContainsKey("Transform_initialpos"))
-                        {
-                            EditorGUILayout.LabelField("Place Object On", EditorStyles.boldLabel);
-                            if (changedProperties["Transform_initialpos"] != null)
-                            {
-                                var pos = changedProperties["Transform_initialpos"] as JObject;
-
-                                string xValue = pos["x"]?.ToString();
-                                string yValue = pos["y"]?.ToString();
-                                string zValue = pos["z"]?.ToString();
-
-                                xValue = EditorGUILayout.TextField("x: ", xValue);
-                                yValue = EditorGUILayout.TextField("y: ", yValue);
-                                zValue = EditorGUILayout.TextField("z: ", zValue);
-
-                                pos["x"] = xValue;
-                                pos["y"] = yValue;
-                                pos["z"] = zValue;
-
-                                changedProperties["Transform_initialpos"] = pos;
-                            }
-                        }
-                        actionResponse.response_event.change_property_by = changedProperties;
-                    }
-                }
+                EditorGUILayout.LabelField("Postcondition:", EditorStyles.boldLabel);
+                DisplayConditionNode(rule.Postcondition);
             }
 
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         }
     }
 
-    public void SaveVersion(int version_no)
+    private void DisplayConditionNode(ConditionNode node, int indentLevel = 0)
     {
-        List<SerializedObject> objects = new List<SerializedObject>();
+        string indent = new string(' ', indentLevel * 4);
+        
+        if (node.all != null && node.all.Count > 0)
+        {
+            EditorGUILayout.LabelField($"{indent}ALL:");
+            foreach (var child in node.all) DisplayConditionNode(child, indentLevel + 1);
+        }
+        
+        if (node.any != null && node.any.Count > 0)
+        {
+            EditorGUILayout.LabelField($"{indent}ANY:");
+            foreach (var child in node.any) DisplayConditionNode(child, indentLevel + 1);
+        }
 
-        // Get all objects in the scene
+        if (node.equals != null && node.equals.Count >= 2)
+        {
+             EditorGUILayout.LabelField($"{indent}{node.equals[0]} == {node.equals[1]}");
+        }
+
+        if (!string.IsNullOrEmpty(node.runAlgorithm))
+        {
+             EditorGUILayout.LabelField($"{indent}Run: {node.runAlgorithm}");
+             if (node.@params != null)
+             {
+                 foreach (var param in node.@params)
+                 {
+                     EditorGUILayout.LabelField($"{indent}  {param.Key}: {param.Value}");
+                 }
+             }
+        }
+    }
+
+    public void SaveVersion(int prev_version_no, int version_no)
+    {
+        // Lookup for existing metadata
+        Dictionary<string, Article> existingArticles = new Dictionary<string, Article>();
+        if (objectSpecifications != null && objectSpecifications.articles != null)
+        {
+            foreach (var art in objectSpecifications.articles)
+            {
+                if (!string.IsNullOrEmpty(art._objectname) && !existingArticles.ContainsKey(art._objectname))
+                    existingArticles[art._objectname] = art;
+            }
+        }
+
+        List<Article> newArticles = new List<Article>();
         GameObject[] allObjects = FindObjectsOfType<GameObject>();
-        // current formats
-        Dictionary<string, List<Dictionary<string, object>>> new_format_data = new Dictionary<string, List<Dictionary<string, object>>>();
-        new_format_data["articles"] = new List<Dictionary<string, object>>();
-        Dictionary<string, List<Dictionary<string, object>>> actres_data = new Dictionary<string, List<Dictionary<string, object>>>();
-        actres_data["ObjAction"] = new List<Dictionary<string, object>>();
-        // old format (legacy purpose??)
-        Dictionary<string, Dictionary<string, object>> data = new Dictionary<string, Dictionary<string, object>>();
 
-        int index = 0;
         foreach (GameObject obj in allObjects)
         {
-            if(obj.name == "Main Camera" || obj.name == "Directional Light")
+            if (obj.name == "Main Camera" || obj.name == "Directional Light" || obj.name == "XR Interaction Manager" || obj.name == "XR Origin (XR Rig)")
                 continue;
 
-            SerializedObject so = null;
-            if (obj != null)
+            // Helper to get scene data (returns Dictionary<string,object> with numeric values)
+            var posData = HF.GetTransformInitialPosition(obj);
+            var rotData = HF.GetTransformInitialRotation(obj);
+            var scaleData = HF.GetTransformObjectScale(obj);
+            var rigidData = HF.GetXRRigidObject(obj);
+
+            Article art = new Article();
+            art._objectname = obj.name;
+
+            // 1. Populate Metadata from existing (or defaults)
+            if (existingArticles.ContainsKey(obj.name))
             {
-                // Get the SerializedObject for the object
-                Dictionary<string, object> objData = new Dictionary<string, object>();
-                objData["Transform_initialpos"] = HF.GetTransformInitialPosition(obj);
-                objData["XRRigidObject"] = HF.GetXRRigidObject(obj);
-                objData["Transform_objectscale"] = HF.GetTransformObjectScale(obj);
-                objData["Transform_initialrotation"] = HF.GetTransformInitialRotation(obj);
-                so = new SerializedObject(obj);
-                so.Update();
-
-                SerializedProperty iterator = so.GetIterator();
-                while (iterator.NextVisible(true))
-                {
-                    // If the property is a container (array or object), recursively add its contents
-                    if (iterator.propertyType == SerializedPropertyType.ObjectReference || iterator.propertyType == SerializedPropertyType.ArraySize)
-                    {
-                        if (iterator.isArray)
-                        {
-                            SerializedProperty element = iterator.Copy();
-                            element.Next(true);
-                            int count = iterator.arraySize;
-                            List<object> elementsData = new List<object>();
-                            for (int i = 0; i < count; i++)
-                            {
-                                SerializedObject elementObj = new SerializedObject(element.objectReferenceValue);
-                                elementObj.Update();
-                                elementsData.Add(SaveObject(elementObj));
-                                element.Next(false);
-                            }
-                            objData[iterator.name] = elementsData;
-                        }
-                        else
-                        {
-                            if (iterator.objectReferenceValue != null)
-                            {
-                                SerializedObject elementObj = new SerializedObject(iterator.objectReferenceValue);
-                                elementObj.Update();
-                                objData[iterator.name] = SaveObject(elementObj);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // Otherwise, just add the property value
-                        objData[iterator.name] = SaveProperty(iterator);
-                    }
-                }
-                if(obj.GetComponent<MeshFilter>() && obj.GetComponent<MeshFilter>().sharedMesh)
-                    objData["shape"] = obj.GetComponent<MeshFilter>().sharedMesh.name;
-                objData["_objectname"] = objData["m_Name"];
-                objects.Add(so);
-                data[index.ToString()] = objData;
-                new_format_data["articles"].Add(objData);
-                index++;
-                so.ApplyModifiedProperties();
-            }
-
-
-            ActionComponent[] actionComponents = obj.GetComponents<ActionComponent>();
-            if (actionComponents != null && actionComponents.Length > 0)
-            {
-                foreach (ActionComponent actionComponent in actionComponents)
-                {
-                    Dictionary<string, object> actionData = new Dictionary<string, object>();
-                    Dictionary<string, object> triggerData = new Dictionary<string, object>();
-                    Dictionary<string, object> responseData = new Dictionary<string, object>();
-
-                    triggerData["sourceObj"] = actionComponent.gameObject.name;
-                    if (actionComponent.targetObject != null)
-                    {
-                        responseData["targetObj"] = actionComponent.targetObject.name;
-                    }
-                    else
-                    {
-                        responseData["targetObj"] = "none";
-                    }
-                    if (actionComponent.trigger != null)
-                    {
-                        string ActResId = actionComponent.trigger.name;
-                        ActResId = ActResId.Substring(0, ActResId.IndexOf("_Trigger"));
-                        actionData["actresid"] = ActResId;
-                        string TrigName = actionComponent.trigger.GetType().Name;
-                        switch (TrigName) {
-                            case "UserClickTrigger":
-                                triggerData["isCollision"] = "false";
-                                triggerData["action"] = "input";
-                                triggerData["inputType"] = "click";
-                                triggerData["change_property_by"] = "none";
-                                break;
-                            case "AngleTrigger":
-                                triggerData["isCollision"] = "false";
-                                triggerData["action"] = "change";
-                                triggerData["inputType"] = "none";
-                                AngleTrigger angleTrigger = actionComponent.trigger as AngleTrigger;
-                                if (angleTrigger != null)
-                                {
-                                    triggerData["change_property_by"] = new Dictionary<string, Dictionary<string, string>>
-                                    {
-                                        { 
-                                            "Transform_initialrotation", new Dictionary<string, string>
-                                            {
-                                                { "x", angleTrigger.fallThreshold_x.ToString() },
-                                                { "y", angleTrigger.fallThreshold_y.ToString() },
-                                                { "z", angleTrigger.fallThreshold_z.ToString() }
-                                            }
-                                        }
-                                    };
-                                }
-                                break;
-                            case "CollisionTrigger":
-                                triggerData["isCollision"] = "true";
-                                triggerData["action"] = "none";
-                                triggerData["inputType"] = "none";
-                                triggerData["change_property_by"] = "none";
-                                break;
-                            default:
-                                triggerData["isCollision"] = "false";
-                                triggerData["action"] = "none";
-                                triggerData["inputType"] = "none";
-                                triggerData["change_property_by"] = "none";
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        triggerData["isCollision"] = "false";
-                        triggerData["action"] = "none";
-                        triggerData["inputType"] = "none";
-                        triggerData["change_property_by"] = "none";
-                    }
-
-                    if (actionComponent.response != null)
-                    {
-                        string RespName = actionComponent.response.GetType().Name;
-                        Debug.Log(RespName);
-                        switch (RespName) {
-                            case "DisappearBehavior":
-                                responseData["isCollision"] = "false";
-                                responseData["response"] = "disappear";
-                                responseData["force"] = "none";
-                                break;
-                            case "MoveForwardBehavior":
-                                responseData["isCollision"] = "false";
-                                responseData["response"] = "force";
-                                MoveForwardBehavior moveForwardBehavior = actionComponent.response as MoveForwardBehavior;
-                                if(moveForwardBehavior != null)
-                                {
-                                    responseData["force"] = new Dictionary<string, string>
-                                    {
-                                        { "force_x", moveForwardBehavior.force_x.ToString() },
-                                        { "force_y", moveForwardBehavior.force_y.ToString() },
-                                        { "force_z", moveForwardBehavior.force_z.ToString() },
-                                        { "type", moveForwardBehavior.type.ToString() }
-                                    };
-                                }
-                                break;
-                            case "CollisionBehavior":
-                                responseData["isCollision"] = "true";
-                                responseData["response"] = "none";
-                                responseData["force"] = "none";
-                                break;
-                            default:
-                                responseData["isCollision"] = "false";
-                                responseData["response"] = "none";
-                                responseData["force"] = "none";
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        responseData["isCollision"] = "false";
-                        responseData["response"] = "none";
-                        responseData["force"] = "none";
-                    }
-
-                    actionData["trigger_event"] = triggerData;
-                    actionData["response_event"] = responseData;
-
-                    actres_data["ObjAction"].Add(actionData);
-                }
-            }
-
-        }
-        // Convert the dictionary to a JSON string
-        Debug.Log("Finally we have this structure");
-        foreach (KeyValuePair<string, System.Collections.Generic.Dictionary<string, object>> pair in data)
-        {
-            Debug.Log("Key: " + pair.Key + ", Value: " + pair.Value);
-            foreach (KeyValuePair<string, object> pair_inside in pair.Value)
-            {
-                Debug.Log("Key: " + pair_inside.Key + ", Value: " + pair_inside.Value);
-            }
-        }
-        // string json = JsonUtility.ToJson(data, true);
-        string json = JsonConvert.SerializeObject(data, Formatting.Indented);
-        string json_new_format = JsonConvert.SerializeObject(new_format_data, Formatting.Indented);
-        string json_actres = JsonConvert.SerializeObject(actres_data, Formatting.Indented);
-        // Debug.Log(json);
-        // Save the JSON string to a file
-        string directory_path = "Assets/specifications/version_" + version_no;
-        if (!Directory.Exists(directory_path))
-            Directory.CreateDirectory(directory_path);
-
-        File.WriteAllText(directory_path + "/article_old.json", json);
-        File.WriteAllText(directory_path + "/article.json", json_new_format);
-        File.WriteAllText(directory_path + "/action-response.json", json_actres);
-        Debug.Log("version number");
-        Debug.Log(version_no);
-        // version_index++;
-    }
-
-    private object SaveProperty(SerializedProperty property)
-    {
-        switch (property.propertyType)
-        {
-            case SerializedPropertyType.Integer:
-                return property.intValue;
-            case SerializedPropertyType.Boolean:
-                return property.boolValue;
-            case SerializedPropertyType.Float:
-                return property.floatValue;
-            case SerializedPropertyType.String:
-                return property.stringValue;
-            case SerializedPropertyType.Color:
-                return property.colorValue;
-            case SerializedPropertyType.Vector2:
-                return property.vector2Value;
-            case SerializedPropertyType.Vector3:
-                return property.vector3Value;
-            case SerializedPropertyType.Vector4:
-                return property.vector4Value;
-            case SerializedPropertyType.Rect:
-                return property.rectValue;
-            case SerializedPropertyType.ArraySize:
-                return property.intValue;
-            case SerializedPropertyType.Character:
-                return property.stringValue[0];
-            case SerializedPropertyType.ObjectReference:
-                return property.objectReferenceValue ? property.objectReferenceValue.name : null;
-            default:
-                return null;
-        }
-    }
-
-    private object SaveObject(SerializedObject obj)
-    {
-        Dictionary<string, object> objData = new Dictionary<string, object>();
-        obj.Update();
-
-        // Iterate through all the properties of the object
-        SerializedProperty iterator = obj.GetIterator();
-        while (iterator.NextVisible(true))
-        {
-            // If the property is a container (array or object), recursively add its contents
-            if (iterator.propertyType == SerializedPropertyType.ObjectReference || iterator.propertyType == SerializedPropertyType.ArraySize)
-            {
-                if (iterator.isArray)
-                {
-                    SerializedProperty element = iterator.Copy();
-                    element.Next(true);
-                    int count = iterator.arraySize;
-                    List<object> elementsData = new List<object>();
-                    for (int i = 0; i < count; i++)
-                    {
-                        SerializedObject elementObj = new SerializedObject(element.objectReferenceValue);
-                        elementObj.Update();
-                        elementsData.Add(SaveObject(elementObj));
-                        element.Next(false);
-                    }
-                    objData[iterator.name] = elementsData;
-                }
-                else
-                {
-                    SerializedObject elementObj = new SerializedObject(iterator.objectReferenceValue);
-                    elementObj.Update();
-                    objData[iterator.name] = SaveObject(elementObj);
-                }
+                Article existing = existingArticles[obj.name];
+                art._sid = existing._sid;
+                art._slabel = existing._slabel;
+                art.source = existing.source;
+                art._IsHidden = existing._IsHidden;
+                art._enumcount = existing._enumcount;
+                art._Is3DObject = existing._Is3DObject;
+                art.HasChild = existing.HasChild;
+                art.Children = existing.Children;
+                art.states = existing.states;
+                art.context_img_source = existing.context_img_source;
+                
             }
             else
             {
-                // Otherwise, just add the property value
-                objData[iterator.name] = SaveProperty(iterator);
+                // Defaults for new objects
+                art.HasChild = 0;
+                art._IsHidden = 0;
+                art._enumcount = 0;
+                art._Is3DObject = 1; // Assume 3D?
             }
-        }
 
-        // Add the object's components to the dictionary
-        GameObject gameObject = obj.targetObject as GameObject;
-        if (gameObject != null)
-        {
-            Component[] components = gameObject.GetComponents<Component>();
-            foreach (Component component in components)
+            // 2. Populate Scene Data (Transforms, Physics, Shape)
+            
+            // Shape
+            if (obj.GetComponent<MeshFilter>() && obj.GetComponent<MeshFilter>().sharedMesh)
+                art.shape = obj.GetComponent<MeshFilter>().sharedMesh.name;
+            else if (!string.IsNullOrEmpty(art.context_img_source))
+                art.shape = null; // prefab/context image source might assume explicit shape or none
+            else
+                art.shape = "empty";
+
+            // Transforms - Convert numbers to strings
+            art.Transform_initialpos = new TransformData 
+            { 
+                x = posData["x"].ToString(), 
+                y = posData["y"].ToString(), 
+                z = posData["z"].ToString() 
+            };
+            art.Transform_initialrotation = new TransformData 
+            { 
+                x = rotData["x"].ToString(), 
+                y = rotData["y"].ToString(), 
+                z = rotData["z"].ToString() 
+            };
+            art.Transform_objectscale = new TransformData 
+            { 
+                x = scaleData["x"].ToString(), 
+                y = scaleData["y"].ToString(), 
+                z = scaleData["z"].ToString() 
+            };
+
+            // XR Rigid Object
+            art.XRRigidObject = new XRRigidObject
             {
-                SerializedObject componentObj = new SerializedObject(component);
-                componentObj.Update();
-                objData[component.GetType().Name] = SaveObject(componentObj);
-            }
+                value = rigidData["value"].ToString(),
+                mass = rigidData["mass"].ToString(),
+                dragfriction = rigidData["dragfriction"].ToString(),
+                angulardrag = rigidData["angulardrag"].ToString(),
+                Isgravityenable = rigidData["Isgravityenable"].ToString().ToLower(), // JSON often uses lowercase true/false
+                IsKinematic = rigidData["IsKinematic"].ToString().ToLower(),
+                CanInterpolate = rigidData["CanInterpolate"].ToString(),
+                CollisionPolling = rigidData["CollisionPolling"].ToString()
+            };
+
+            newArticles.Add(art);
         }
 
-        obj.ApplyModifiedProperties();
-        return objData;
+        // Construct final ArticleList
+        ArticleList finalList = new ArticleList { articles = newArticles };
+        string json_new_format = JsonConvert.SerializeObject(finalList, Formatting.Indented);
+
+        // Save
+        string directory_path = "Assets/VReqDV/specifications/version_" + version_no;
+        if (!Directory.Exists(directory_path))
+            Directory.CreateDirectory(directory_path);
+
+        File.WriteAllText(directory_path + "/article.json", json_new_format);
+        
+
+        Debug.Log("Saved version " + version_no);
+
+        // Copy behavior.json and UserAlgorithms.cs from previous version if they exist
+        if (prev_version_no > 0)
+        {
+            string prev_directory_path = "Assets/VReqDV/specifications/version_" + prev_version_no;
+            
+            // 1. Copy behavior.json
+            string prev_behavior_path = prev_directory_path + "/behavior.json";
+            string new_behavior_path = directory_path + "/behavior.json";
+            if (File.Exists(prev_behavior_path) && !File.Exists(new_behavior_path))
+            {
+                File.Copy(prev_behavior_path, new_behavior_path);
+                Debug.Log($"Saved behavior.json from Version {prev_version_no} to Version {version_no}");
+            }
+
+            // 2. Copy and Update UserAlgorithms.cs
+            string prev_algo_path = prev_directory_path + "/UserAlgorithms.cs";
+            string new_algo_path = directory_path + "/UserAlgorithms.cs";
+            if (File.Exists(prev_algo_path) && !File.Exists(new_algo_path))
+            {
+                string content = File.ReadAllText(prev_algo_path);
+                // Replace namespace
+                content = content.Replace($"namespace Version_{prev_version_no}", $"namespace Version_{version_no}");
+                File.WriteAllText(new_algo_path, content);
+                Debug.Log($"Saved and updated UserAlgorithms.cs from Version {prev_version_no} to Version {version_no}");
+            }
+        }
+        
+        // Refresh internal state if saving to current ver
+        if(version_no == screenState.curr_version)
+        {
+             objectSpecifications = finalList;
+        }
     }
+
+
 
 }

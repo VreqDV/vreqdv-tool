@@ -16,8 +16,16 @@ public class BehaviorRule
     [JsonProperty("event")]
     public string Event;
 
-    [JsonProperty("source")]
-    public string Source;
+    [JsonProperty("actors")]
+    public List<string> Actors;
+
+    // Backward compatibility: Source returns the first actor if available
+    [JsonIgnore]
+    public string Source 
+    {
+        get { return (Actors != null && Actors.Count > 0) ? Actors[0] : null; }
+        set { if (Actors == null) Actors = new List<string>(); if (!Actors.Contains(value)) Actors.Insert(0, value); }
+    }
 
     [JsonProperty("precondition")]
     public ConditionNode Precondition;
@@ -124,30 +132,51 @@ public class Article
     public int HasChild { get; set; }
     public List<string> Children { get; set; }
     public string shape { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public Dimension dimension { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public bool IsText { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public bool IsText3D { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public Lighting lighting { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public bool IsIlluminate { get; set; }
     public TransformData Transform_initialpos { get; set; }
     public TransformData Transform_initialrotation { get; set; }
     public TransformData Transform_objectscale { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public RepeatTransform repeattransfrom { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public Interaction Interaction { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public string Smoothing { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public string Smoothing_duration { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public AttachTransform attachtransform { get; set; }
     public XRRigidObject XRRigidObject { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public string aud_hasaudio { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public string aud_type { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public string aud_src { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public string aud_volume { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public string aud_PlayInloop { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public string aud_IsSurround { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public string aud_Dopplerlevel { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public string aud_spread { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public string aud_mindist { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public string aud_maxdist { get; set; }
+    [Newtonsoft.Json.JsonIgnore]
     public string _Opttxt1 { get; set; }
     public List<string> states { get; set; }
     public string context_img_source { get; set; }

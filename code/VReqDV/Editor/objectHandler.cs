@@ -103,7 +103,6 @@ public class ObjectHandler
                 {
                     go = UnityEngine.Object.Instantiate(prefab);
                     go.name = objectData._objectname;
-                    // go = Instantiate(go);
                     if(go.GetComponent<BoxCollider>() == null)
                         go.AddComponent<BoxCollider>();
                 }
@@ -116,7 +115,6 @@ public class ObjectHandler
             }
             else
             {
-                // Debug.Log(objectData._objectname);
                 go = GameObject.CreatePrimitive(HF.GetPrimitiveTypeByString(objectData.shape));
                 go.name = objectData._objectname;
             }
@@ -183,7 +181,6 @@ public class ObjectHandler
                         break;
                 }
             }
-            // Debug.Log(objectData._objectname);
             // Extract version from directory path
             string dirName = new DirectoryInfo(directory_path).Name;
             string version = char.ToUpper(dirName[0]) + dirName.Substring(1); // e.g., "Version_16"
