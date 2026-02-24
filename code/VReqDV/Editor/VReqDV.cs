@@ -204,9 +204,12 @@ public class MainMenu : EditorWindow
 
             GUILayout.BeginHorizontal();
 
+            bool formContentChanged = false;
+
             // Scrollable area for object data
             scrollPositionObject = EditorGUILayout.BeginScrollView(scrollPositionObject, GUILayout.Height(position.height - 80), GUILayout.Width(position.width / 2));
 
+            EditorGUI.BeginChangeCheck();
             if (objectSpecifications != null && objectSpecifications.articles != null)
             {
                 if (list[selected_display_component] == "Articles")
@@ -220,6 +223,10 @@ public class MainMenu : EditorWindow
                 {
                     DisplayBehaviorForm(behaviorSpecifications.behaviors, screenState.curr_version);
                 }
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                formContentChanged = true;
             }
             EditorGUILayout.EndScrollView();
 
@@ -242,7 +249,7 @@ public class MainMenu : EditorWindow
             }
             GUILayout.EndHorizontal();
             
-            if (editingEnabled && GUI.changed)
+            if (editingEnabled && formContentChanged)
             {
                 string json1 = JsonConvert.SerializeObject(objectSpecifications, Formatting.Indented);
                 string filePath1 = $"Assets/VReqDV/specifications/version_{screenState.curr_version}/article.json";
