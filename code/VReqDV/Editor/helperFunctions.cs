@@ -6,6 +6,7 @@ using System;
 using Newtonsoft.Json;
 using UnityEditor.SceneManagement;
 using Newtonsoft.Json.Linq;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class HelperFunctions
 {
@@ -131,5 +132,47 @@ public class HelperFunctions
         }
 
         return xrrigidObject;
+    }
+
+    public static Interaction GetInteraction(GameObject obj)
+    {
+        Interaction interaction = new Interaction();
+        XRGrabInteractable grabInteractable = obj.GetComponent<XRGrabInteractable>();
+
+        if (grabInteractable != null)
+        {
+            interaction.XRGrabInteractable = "true";
+            interaction.TrackPosition = grabInteractable.trackPosition.ToString().ToLower();
+            interaction.TrackRotation = grabInteractable.trackRotation.ToString().ToLower();
+            interaction.Throw_Detach = grabInteractable.throwOnDetach.ToString().ToLower();
+
+            // Read interaction layer mask as a list of layer indices
+            interaction.XRInteractionMaskLayer = new List<string>();
+            InteractionLayerMask mask = grabInteractable.interactionLayers;
+            for (int i = 0; i < 32; i++)
+            {
+                if ((mask.value & (1 << i)) != 0)
+                {
+                    interaction.XRInteractionMaskLayer.Add(i.ToString());
+                }
+            }
+
+            interaction.forcegravity = "";
+            interaction.velocity = "";
+            interaction.angularvelocity = "";
+        }
+        else
+        {
+            interaction.XRGrabInteractable = "false";
+            interaction.XRInteractionMaskLayer = new List<string>();
+            interaction.TrackPosition = "false";
+            interaction.TrackRotation = "false";
+            interaction.Throw_Detach = "false";
+            interaction.forcegravity = "";
+            interaction.velocity = "";
+            interaction.angularvelocity = "";
+        }
+
+        return interaction;
     }
 }

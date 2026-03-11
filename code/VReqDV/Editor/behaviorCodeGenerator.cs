@@ -2,6 +2,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -159,9 +160,19 @@ public static class BehaviorCodeGenerator
         Debug.Log($"Generating behavior for file: {rule.Id} (Version: {version})");
         Directory.CreateDirectory(outputFolder);
 
-        string code = rule.Event == "OnCondition"
-            ? GenerateOnCondition(rule, version)
-            : GenerateOnStateChange(rule, version);
+        string code;
+        switch (rule.Event)
+        {
+            case "OnCondition":
+                code = GenerateOnCondition(rule, version);
+                break;
+            case "OnXRInteraction":
+                code = GenerateXRInteractableEvent(rule, version);
+                break;
+            default:
+                code = GenerateOnStateChange(rule, version);
+                break;
+        }
 
         File.WriteAllText(
             Path.Combine(outputFolder, $"{rule.Id}.cs"),
@@ -232,6 +243,136 @@ public static class BehaviorCodeGenerator
         sb.AppendLine($"                UserAlgorithms.{rule.ActionAlgorithm}({args});");
         
         sb.AppendLine("            }");
+        sb.AppendLine("        }");
+        sb.AppendLine("    }");
+        sb.AppendLine("}");
+
+        return sb.ToString();
+    }
+
+    // ------------------------------------------------------------
+    // ON XR INTERACTION TEMPLATE (Event-driven)
+    // ------------------------------------------------------------
+    
+    private static string ExtractXRInteraction(ConditionNode node)
+    {
+        if (node == null) return null;
+        if (!string.IsNullOrEmpty(node.XRinteraction)) return node.XRinteraction;
+        
+        if (node.all != null)
+        {
+            foreach (var child in node.all)
+            {
+                var res = ExtractXRInteraction(child);
+                if (res != null) return res;
+            }
+        }
+        
+        if (node.any != null)
+        {
+            foreach (var child in node.any)
+            {
+                var res = ExtractXRInteraction(child);
+                if (res != null) return res;
+            }
+        }
+        
+        return null;
+    }
+
+    private static string GenerateXRInteractableEvent(BehaviorRule rule, string version)
+    {
+        // Recursively find XRinteraction in the precondition tree
+        string interactionType = ExtractXRInteraction(rule.Precondition);
+
+        // Map interactionType to XRI event name and args type
+        string eventName;
+        string argsType;
+        switch (interactionType?.ToLower())
+        {
+            case "grab":
+            case "select":
+                eventName = "selectEntered";
+                argsType = "SelectEnterEventArgs";
+                break;
+            case "grabexit":
+            case "selectexit":
+                eventName = "selectExited";
+                argsType = "SelectExitEventArgs";
+                break;
+            case "activate":
+                eventName = "activated";
+                argsType = "ActivateEventArgs";
+                break;
+            case "deactivate":
+                eventName = "deactivated";
+                argsType = "DeactivateEventArgs";
+                break;
+            case "hover":
+                eventName = "hoverEntered";
+                argsType = "HoverEnterEventArgs";
+                break;
+            case "hoverexit":
+                eventName = "hoverExited";
+                argsType = "HoverExitEventArgs";
+                break;
+            case "focus":
+                eventName = "focusEntered";
+                argsType = "FocusEnterEventArgs";
+                break;
+            case "focusexit":
+                eventName = "focusExited";
+                argsType = "FocusExitEventArgs";
+                break;
+            default:
+                Debug.LogWarning($"Unknown XRinteraction '{interactionType}' — defaulting to activated");
+                eventName = "activated";
+                argsType = "ActivateEventArgs";
+                break;
+        }
+
+        var sb = new StringBuilder();
+
+        sb.AppendLine("// GENERATED FILE — DO NOT EDIT");
+        sb.AppendLine("using UnityEngine;");
+        sb.AppendLine("using UnityEngine.XR.Interaction.Toolkit;");
+        sb.AppendLine();
+        sb.AppendLine($"namespace {version}");
+        sb.AppendLine("{");
+        sb.AppendLine($"    public class {rule.Id} : MonoBehaviour");
+        sb.AppendLine("    {");
+        sb.AppendLine("        private XRBaseInteractable _interactable;");
+        sb.AppendLine();
+        sb.AppendLine("        void OnEnable()");
+        sb.AppendLine("        {");
+        sb.AppendLine("            _interactable = GetComponent<XRBaseInteractable>();");
+        sb.AppendLine($"            if (_interactable != null) _interactable.{eventName}.AddListener(OnInteraction);");
+        sb.AppendLine("        }");
+        sb.AppendLine();
+        sb.AppendLine("        void OnDisable()");
+        sb.AppendLine("        {");
+        sb.AppendLine($"            if (_interactable != null) _interactable.{eventName}.RemoveListener(OnInteraction);");
+        sb.AppendLine("        }");
+        sb.AppendLine();
+        sb.AppendLine($"        void OnInteraction({argsType} args)");
+        sb.AppendLine("        {");
+
+        // Generate precondition check
+        string condition = GenerateCondition(rule.Precondition);
+        if (condition != "true")
+        {
+            sb.AppendLine($"            if ({condition})");
+            sb.AppendLine("            {");
+            string args2 = GetParamsString(rule.Action?.@params);
+            sb.AppendLine($"                UserAlgorithms.{rule.ActionAlgorithm}({args2});");
+            sb.AppendLine("            }");
+        }
+        else
+        {
+            string args2 = GetParamsString(rule.Action?.@params);
+            sb.AppendLine($"            UserAlgorithms.{rule.ActionAlgorithm}({args2});");
+        }
+
         sb.AppendLine("        }");
         sb.AppendLine("    }");
         sb.AppendLine("}");

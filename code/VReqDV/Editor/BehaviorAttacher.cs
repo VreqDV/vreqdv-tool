@@ -87,6 +87,12 @@ public class BehaviorAttacher
             string className = $"{versionNamespace}.{rule.Id}";
             string initializerName = $"{versionNamespace}.{rule.Source}Initializer";
 
+            // If this is an XR interaction, attach prerequisites before the behavior script
+            if (rule.Event == "OnXRInteraction")
+            {
+                EnsureXRInteractable(rule.Source);
+            }
+
             // Attach Behavior
             AttachComponent(rule.Source, className);
             
@@ -97,6 +103,37 @@ public class BehaviorAttacher
         }
         
         Debug.Log($"[VReqDV] Successfully attached {count} behaviors/initializers for {versionNamespace}.");
+    }
+
+    private static void EnsureXRInteractable(string objName)
+    {
+        GameObject obj = GameObject.Find(objName);
+        if (obj == null) return;
+
+        UnityEngine.XR.Interaction.Toolkit.XRBaseInteractable interactable = obj.GetComponent<UnityEngine.XR.Interaction.Toolkit.XRBaseInteractable>();
+        
+        if (interactable == null)
+        {
+            Debug.Log($"[VReqDV] {objName} requested OnXRInteraction but has no interactable. Attaching XRSimpleInteractable.");
+            
+            // Require a collider for the raycast to hit
+            if (obj.GetComponent<Collider>() == null)
+            {
+                obj.AddComponent<BoxCollider>();
+            }
+
+            interactable = obj.AddComponent<UnityEngine.XR.Interaction.Toolkit.XRSimpleInteractable>();
+
+            // Wire up the Interaction Manager from the scene
+            UnityEngine.XR.Interaction.Toolkit.XRInteractionManager manager = UnityEngine.Object.FindObjectOfType<UnityEngine.XR.Interaction.Toolkit.XRInteractionManager>();
+            if (manager != null)
+            {
+                interactable.interactionManager = manager;
+            }
+
+            // Mark the object dirty so Unity saves the newly attached components in the scene
+            EditorUtility.SetDirty(obj);
+        }
     }
 
     private static void AttachComponent(string objName, string typeName)

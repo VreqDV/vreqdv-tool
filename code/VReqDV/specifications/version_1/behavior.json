@@ -1,79 +1,44 @@
 {
     "behaviors": [
         {
-            "id": "BallClickToRoll",
-            "event": "OnCondition",
+            "id": "SpaceshipLaunch",
+            "event": "OnXRInteraction",
             "actors": [
-                "Ball"
+                "Spaceship"
             ],
             "precondition": {
-                "all": [
-                    {
-                        "equals": [
-                            "Self.state",
-                            "ready"
-                        ]
-                    },
-                    {
-                        "runAlgorithm": "IsBallClicked"
-                    }
+                "XRinteraction": "select",
+                "equals": [
+                    "Self.state",
+                    "idle"
                 ]
             },
             "action": {
-                "runAlgorithm": "RollBall"
+                "runAlgorithm": "LaunchSpaceship"
             },
             "postcondition": {
                 "equals": [
                     "Self.state",
-                    "rolling"
+                    "flying"
                 ]
             }
         },
         {
-            "id": "BallStopAtEnd",
+            "id": "SpaceshipFlyToDebris",
             "event": "OnCondition",
             "actors": [
-                "Ball"
+                "Spaceship"
             ],
             "precondition": {
                 "all": [
                     {
                         "equals": [
                             "Self.state",
-                            "rolling"
+                            "flying"
                         ]
                     },
                     {
-                        "runAlgorithm": "HasBallReachedEnd"
-                    }
-                ]
-            },
-            "action": {
-                "runAlgorithm": "StopAndResetBall"
-            },
-            "postcondition": {
-                "equals": [
-                    "Self.state",
-                    "ready"
-                ]
-            }
-        },
-        {
-            "id": "PinFall",
-            "event": "OnCondition",
-            "actors": [
-                "Pin_1"
-            ],
-            "precondition": {
-                "all": [
-                    {
-                        "equals": [
-                            "Self.state",
-                            "standing"
-                        ]
-                    },
-                    {
-                        "runAlgorithm": "IsPinFallen",
+                        "runAlgorithm": "SteerTowardNearestDebris",
                         "params": {
                             "obj": "Self"
                         }
@@ -81,7 +46,7 @@
                 ]
             },
             "action": {
-                "runAlgorithm": "SetPinFallen",
+                "runAlgorithm": "CollectNearestDebris",
                 "params": {
                     "obj": "Self"
                 }
@@ -89,73 +54,128 @@
             "postcondition": {
                 "equals": [
                     "Self.state",
-                    "fallen"
+                    "flying"
                 ]
             }
         },
         {
-            "id": "PinReset",
+            "id": "SpaceshipReturn",
             "event": "OnCondition",
             "actors": [
-                "Pin_1"
+                "Spaceship"
             ],
             "precondition": {
                 "all": [
                     {
                         "equals": [
                             "Self.state",
-                            "fallen"
+                            "flying"
                         ]
                     },
                     {
-                        "equals": [
-                            "Pin_2.state",
-                            "fallen"
-                        ]
-                    },
-                    {
-                        "equals": [
-                            "Pin_3.state",
-                            "fallen"
-                        ]
-                    },
-                    {
-                        "equals": [
-                            "Ball.state",
-                            "ready"
-                        ]
+                        "runAlgorithm": "IsAllDebrisCollected"
                     }
                 ]
             },
             "action": {
-                "runAlgorithm": "ResetBallAndPins"
+                "runAlgorithm": "ReturnToBase",
+                "params": {
+                    "obj": "Self"
+                }
+            },
+            "postcondition": {
+                "equals": [
+                    "Self.state",
+                    "returning"
+                ]
+            }
+        },
+        {
+            "id": "SpaceshipDock",
+            "event": "OnCondition",
+            "actors": [
+                "Spaceship"
+            ],
+            "precondition": {
+                "all": [
+                    {
+                        "equals": [
+                            "Self.state",
+                            "returning"
+                        ]
+                    },
+                    {
+                        "runAlgorithm": "SteerToHomeBase",
+                        "params": {
+                            "obj": "Self"
+                        }
+                    }
+                ]
+            },
+            "action": {
+                "runAlgorithm": "DockAndReset"
             },
             "postcondition": {
                 "all": [
                     {
                         "equals": [
                             "Self.state",
-                            "standing"
+                            "idle"
                         ]
                     },
                     {
                         "equals": [
-                            "Pin_2.state",
-                            "standing"
+                            "Debris_1.state",
+                            "floating"
                         ]
                     },
                     {
                         "equals": [
-                            "Pin_3.state",
-                            "standing"
+                            "Debris_2.state",
+                            "floating"
                         ]
                     },
                     {
                         "equals": [
-                            "Ball.state",
-                            "ready"
+                            "Debris_3.state",
+                            "floating"
                         ]
                     }
+                ]
+            }
+        },
+        {
+            "id": "DebrisGetCollected",
+            "event": "OnCondition",
+            "actors": [
+                "Debris_1"
+            ],
+            "precondition": {
+                "all": [
+                    {
+                        "equals": [
+                            "Self.state",
+                            "floating"
+                        ]
+                    },
+                    {
+                        "runAlgorithm": "IsDebrisCaptured",
+                        "params": {
+                            "obj": "Self"
+                        }
+                    }
+                ]
+            },
+            "action": {
+                "runAlgorithm": "SnapDebrisToShip",
+                "params": {
+                    "obj": "Self"
+                }
+            },
+            "postcondition": {
+                "equals": [
+                    "Self.state",
+                    "collected"
                 ]
             }
         }

@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using UnityEditor.SceneManagement;
 using Newtonsoft.Json.Linq;
 using HF = HelperFunctions;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class ObjectHandler
 {
@@ -51,6 +52,7 @@ public class ObjectHandler
                 if (art.Transform_initialrotation == null) art.Transform_initialrotation = sourceArt.Transform_initialrotation;
                 if (art.Transform_objectscale == null) art.Transform_objectscale = sourceArt.Transform_objectscale;
                 if (art.XRRigidObject == null) art.XRRigidObject = sourceArt.XRRigidObject;
+                if (art.Interaction == null) art.Interaction = sourceArt.Interaction;
                 if (art.states == null) art.states = sourceArt.states;
                 if (string.IsNullOrEmpty(art.context_img_source)) art.context_img_source = sourceArt.context_img_source;
                 
@@ -101,7 +103,8 @@ public class ObjectHandler
                 GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(objectData.context_img_source);
                 if(prefab != null)
                 {
-                    go = UnityEngine.Object.Instantiate(prefab);
+                    // go = UnityEngine.Object.Instantiate(prefab);
+                    go = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
                     go.name = objectData._objectname;
                     if(go.GetComponent<BoxCollider>() == null)
                         go.AddComponent<BoxCollider>();
@@ -181,6 +184,61 @@ public class ObjectHandler
                         break;
                 }
             }
+
+            // Apply XRGrabInteractable from Interaction data
+            if (objectData.Interaction != null && objectData.Interaction.XRGrabInteractable == "true")
+            {
+                XRGrabInteractable grabInteractable = go.GetComponent<XRGrabInteractable>();
+                if (grabInteractable == null)
+                    grabInteractable = go.AddComponent<XRGrabInteractable>();
+
+                // Wire up the Interaction Manager from the scene
+                UnityEngine.XR.Interaction.Toolkit.XRInteractionManager manager = UnityEngine.Object.FindObjectOfType<UnityEngine.XR.Interaction.Toolkit.XRInteractionManager>();
+                if (manager != null)
+                {
+                    grabInteractable.interactionManager = manager;
+                }
+
+                grabInteractable.movementType = XRGrabInteractable.MovementType.Kinematic;
+                grabInteractable.trackPosition = objectData.Interaction.TrackPosition == "true";
+                grabInteractable.trackRotation = objectData.Interaction.TrackRotation == "true";
+                grabInteractable.throwOnDetach = objectData.Interaction.Throw_Detach == "true";
+
+                // Apply interaction layer mask from layer indices or names
+                if (objectData.Interaction.XRInteractionMaskLayer != null && objectData.Interaction.XRInteractionMaskLayer.Count > 0)
+                {
+                    int maskValue = 0;
+                    foreach (string layerIdent in objectData.Interaction.XRInteractionMaskLayer)
+                    {
+                        // Try parsing as integer first
+                        if (int.TryParse(layerIdent, out int idx) && idx >= 0 && idx < 32)
+                        {
+                            maskValue |= (1 << idx);
+                        }
+                        else
+                        {
+                            // Try parsing as string name
+                            // Unity layer names are case-sensitive. Capitalize first letter as fallback for "default"
+                            string fixedLayerIdent = layerIdent;
+                            if (layerIdent.ToLower() == "default") fixedLayerIdent = "Default";
+
+                            int layerIdx = InteractionLayerMask.NameToLayer(fixedLayerIdent);
+                            if (layerIdx != -1)
+                            {
+                                maskValue |= (1 << layerIdx);
+                            }
+                            else
+                            {
+                                Debug.LogWarning($"[VReqDV] Unknown Interaction Layer: {layerIdent}");
+                            }
+                        }
+                    }
+                    InteractionLayerMask layerMask = grabInteractable.interactionLayers;
+                    layerMask.value = maskValue;
+                    grabInteractable.interactionLayers = layerMask;
+                }
+            }
+
             // Extract version from directory path
             string dirName = new DirectoryInfo(directory_path).Name;
             string version = char.ToUpper(dirName[0]) + dirName.Substring(1); // e.g., "Version_16"

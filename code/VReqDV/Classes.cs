@@ -49,6 +49,7 @@ public class ActionNode
 
 public class ConditionNode
 {
+    public string XRinteraction;
     public List<ConditionNode> all;
     public List<ConditionNode> any;
     public List<string> equals;
@@ -147,7 +148,6 @@ public class Article
     public TransformData Transform_objectscale { get; set; }
     [Newtonsoft.Json.JsonIgnore]
     public RepeatTransform repeattransfrom { get; set; }
-    [Newtonsoft.Json.JsonIgnore]
     public Interaction Interaction { get; set; }
     [Newtonsoft.Json.JsonIgnore]
     public string Smoothing { get; set; }
@@ -215,7 +215,7 @@ public class RepeatTransform
 public class Interaction
 {
     public string XRGrabInteractable { get; set; }
-    public string XRInteractionMaskLayer { get; set; }
+    public List<string> XRInteractionMaskLayer { get; set; }
     public string TrackPosition { get; set; }
     public string TrackRotation { get; set; }
     public string Throw_Detach { get; set; }

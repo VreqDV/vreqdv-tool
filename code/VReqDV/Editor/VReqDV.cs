@@ -59,6 +59,15 @@ public class MainMenu : EditorWindow
         window = this;
 
         Initialize();
+
+        // Restore version selection that may have been lost during domain reload
+        int savedVersion = EditorPrefs.GetInt("VReqDV_CurrentVersion", 1);
+        if (savedVersion >= 1 && savedVersion <= screenState.total_versions)
+            screenState.curr_version = savedVersion;
+
+        int savedCompare = EditorPrefs.GetInt("VReqDV_CompareVersion", 0);
+        if (savedCompare >= 0 && savedCompare <= screenState.total_versions)
+            compare_version = savedCompare;
     }
 
     private void OnGUI()
@@ -114,9 +123,16 @@ public class MainMenu : EditorWindow
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Change Current Version:", setFont(12));
-            screenState.curr_version = EditorGUILayout.Popup(screenState.curr_version, version_list, GUILayout.Width(100));
+            int newVersion = EditorGUILayout.Popup(screenState.curr_version, version_list, GUILayout.Width(100));
+            if (newVersion != screenState.curr_version)
+            {
+                screenState.curr_version = newVersion;
+                EditorPrefs.SetInt("VReqDV_CurrentVersion", screenState.curr_version);
+            }
             if(GUILayout.Button("Display Mock-up", GUILayout.Width(200)))
             {
+                // Save version to EditorPrefs before triggering reload
+                EditorPrefs.SetInt("VReqDV_CurrentVersion", screenState.curr_version);
                 ClearObjects();
                 OpenScene(screenState.curr_version);
                 string dir_path = $"Assets/VReqDV/ScenePrefabs/version_{screenState.curr_version}";
@@ -126,7 +142,12 @@ public class MainMenu : EditorWindow
 
             GUILayout.Label("Compare with Version:", setFont(12));
             
-            compare_version = EditorGUILayout.Popup(compare_version, version_list, GUILayout.Width(100));
+            int newCompare = EditorGUILayout.Popup(compare_version, version_list, GUILayout.Width(100));
+            if (newCompare != compare_version)
+            {
+                compare_version = newCompare;
+                EditorPrefs.SetInt("VReqDV_CompareVersion", compare_version);
+            }
 
             // EditorGUI.BeginDisabledGroup(editingEnabled);
             // if(GUILayout.Button("Display Comparison", GUILayout.Width(200)))
@@ -311,8 +332,12 @@ public class MainMenu : EditorWindow
                 continue;
 
             // Skip if this object has XRInteractionManager or XROrigin component
-            if (obj.name == "XR Interaction Manager" || obj.name == "XR Origin (XR Rig)")
+            if (obj.name == "XR Interaction Manager" || obj.name == "XR Origin (XR Rig)" || obj.name == "EventSystem")
                 continue;
+
+            // Skip if this object has Main Camera or Directional Light component
+            if (obj.name == "Main Camera" || obj.name == "Directional Light")
+                continue;   
 
             // deleting root objects automatically removes children too
             if (obj.scene == activeScene && obj.transform.parent == null)
@@ -320,16 +345,16 @@ public class MainMenu : EditorWindow
                 UnityEngine.Object.DestroyImmediate(obj);
             }
         }
-        GameObject mainCamera = new GameObject("Main Camera");
-        mainCamera.AddComponent<Camera>();
-        mainCamera.tag = "MainCamera";
-        mainCamera.transform.position = new Vector3(0, 1, -10);
+        // GameObject mainCamera = new GameObject("Main Camera");
+        // mainCamera.AddComponent<Camera>();
+        // mainCamera.tag = "MainCamera";
+        // mainCamera.transform.position = new Vector3(0, 1, -10);
 
-        GameObject directionalLight = new GameObject("Directional Light");
-        Light lightComp = directionalLight.AddComponent<Light>();
-        lightComp.type = LightType.Directional;
-        directionalLight.transform.position = new Vector3(0, 3, 0);
-        directionalLight.transform.rotation = Quaternion.Euler(50, -30, 0);
+        // GameObject directionalLight = new GameObject("Directional Light");
+        // Light lightComp = directionalLight.AddComponent<Light>();
+        // lightComp.type = LightType.Directional;
+        // directionalLight.transform.position = new Vector3(0, 3, 0);
+        // directionalLight.transform.rotation = Quaternion.Euler(50, -30, 0);
     }
 
     
@@ -396,6 +421,30 @@ public class MainMenu : EditorWindow
                 article.XRRigidObject.IsKinematic = EditorGUILayout.TextField("Is Kinematic ", article.XRRigidObject.IsKinematic);
                 article.XRRigidObject.CanInterpolate = EditorGUILayout.TextField("Interpolate ", article.XRRigidObject.CanInterpolate);
                 article.XRRigidObject.CollisionPolling = EditorGUILayout.TextField("Collision Detection ", article.XRRigidObject.CollisionPolling);
+            }
+
+            if (article.Interaction != null)
+            {
+                EditorGUILayout.LabelField("Interaction", EditorStyles.boldLabel);
+                article.Interaction.XRGrabInteractable = EditorGUILayout.TextField("XR Grab Interactable: ", article.Interaction.XRGrabInteractable);
+                
+                // Display interaction mask layers as a comma-separated editable field
+                string layersStr = article.Interaction.XRInteractionMaskLayer != null ? string.Join(", ", article.Interaction.XRInteractionMaskLayer) : "";
+                string newLayersStr = EditorGUILayout.TextField("Interaction Mask Layers: ", layersStr);
+                if (newLayersStr != layersStr)
+                {
+                    article.Interaction.XRInteractionMaskLayer = new List<string>();
+                    foreach (string layer in newLayersStr.Split(','))
+                    {
+                        string trimmed = layer.Trim();
+                        if (!string.IsNullOrEmpty(trimmed))
+                            article.Interaction.XRInteractionMaskLayer.Add(trimmed);
+                    }
+                }
+
+                article.Interaction.TrackPosition = EditorGUILayout.TextField("Track Position: ", article.Interaction.TrackPosition);
+                article.Interaction.TrackRotation = EditorGUILayout.TextField("Track Rotation: ", article.Interaction.TrackRotation);
+                article.Interaction.Throw_Detach = EditorGUILayout.TextField("Throw On Detach: ", article.Interaction.Throw_Detach);
             }
 
 
@@ -478,6 +527,43 @@ public class MainMenu : EditorWindow
 
     public void SaveVersion(int prev_version_no, int version_no)
     {
+        // Reload objectSpecifications from disk to ensure we have the latest data
+        // (OnGUI button handlers run before objectSpecifications is loaded each frame)
+        Debug.Log($"[SaveVersion] Called with prev_version_no={prev_version_no}, version_no={version_no}");
+        if (prev_version_no > 0)
+        {
+            try
+            {
+                string file = "Assets/VReqDV/specifications/version_" + prev_version_no + "/article.json";
+                string data = File.ReadAllText(file);
+                Debug.Log($"[SaveVersion] Read {data.Length} chars from {file}");
+                
+                var settings = new JsonSerializerSettings
+                {
+                    Error = (sender, args) =>
+                    {
+                        Debug.LogError($"[SaveVersion] JSON Error: {args.ErrorContext.Error.Message} at path: {args.ErrorContext.Path}");
+                        args.ErrorContext.Handled = true;
+                    }
+                };
+                objectSpecifications = JsonConvert.DeserializeObject<ArticleList>(data, settings);
+                Debug.Log($"[SaveVersion] After reload: {objectSpecifications?.articles?.Count ?? 0} articles");
+                if (objectSpecifications?.articles != null)
+                {
+                    foreach (var a in objectSpecifications.articles)
+                        Debug.Log($"[SaveVersion]   - '{a._objectname}'");
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[SaveVersion] Could not reload article.json for version {prev_version_no}: {e.Message}");
+            }
+        }
+        else
+        {
+            Debug.Log($"[SaveVersion] Skipped reload (prev_version_no={prev_version_no})");
+        }
+
         // Lookup for existing metadata
         Dictionary<string, Article> existingArticles = new Dictionary<string, Article>();
         if (objectSpecifications != null && objectSpecifications.articles != null)
@@ -488,14 +574,31 @@ public class MainMenu : EditorWindow
                     existingArticles[art._objectname] = art;
             }
         }
+        Debug.Log($"[SaveVersion] objectSpecifications has {objectSpecifications?.articles?.Count ?? 0} articles. existingArticles keys: [{string.Join(", ", existingArticles.Keys)}]");
 
         List<Article> newArticles = new List<Article>();
         GameObject[] allObjects = FindObjectsOfType<GameObject>();
 
         foreach (GameObject obj in allObjects)
         {
-            if (obj.name == "Main Camera" || obj.name == "Directional Light" || obj.name == "XR Interaction Manager" || obj.name == "XR Origin (XR Rig)")
+            if (obj.name == "Main Camera" || obj.name == "Directional Light" || obj.name == "XR Interaction Manager" || obj.name == "XR Origin (XR Rig)" || obj.name == "EventSystem")
                 continue;
+
+            // Skip children of protected objects (e.g. XR Origin's Camera Offset, controllers, etc.)
+            bool isChildOfProtected = false;
+            Transform parent = obj.transform.parent;
+            while (parent != null)
+            {
+                if (parent.name == "XR Interaction Manager" || parent.name == "XR Origin (XR Rig)" || parent.name == "EventSystem" || parent.name == "Camera Offset" || parent.name == "LeftHand Controller" || parent.name == "RightHand Controller")
+                {
+                    isChildOfProtected = true;
+                    break;
+                }
+                parent = parent.parent;
+            }
+            if (isChildOfProtected) continue;
+
+            Debug.Log($"[SaveVersion] Processing: '{obj.name}', found in existing: {existingArticles.ContainsKey(obj.name)}");
 
             // Helper to get scene data (returns Dictionary<string,object> with numeric values)
             var posData = HF.GetTransformInitialPosition(obj);
@@ -519,6 +622,7 @@ public class MainMenu : EditorWindow
                 art.HasChild = existing.HasChild;
                 art.Children = existing.Children;
                 art.states = existing.states;
+                art.Interaction = existing.Interaction;
                 art.context_img_source = existing.context_img_source;
                 
             }
@@ -533,11 +637,15 @@ public class MainMenu : EditorWindow
 
             // 2. Populate Scene Data (Transforms, Physics, Shape)
             
-            // Shape
-            if (obj.GetComponent<MeshFilter>() && obj.GetComponent<MeshFilter>().sharedMesh)
+            // Shape — check if object is a prefab instance first
+            string prefabPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(obj);
+            if (!string.IsNullOrEmpty(prefabPath))
+            {
+                art.context_img_source = prefabPath;
+                art.shape = null;
+            }
+            else if (obj.GetComponent<MeshFilter>() && obj.GetComponent<MeshFilter>().sharedMesh)
                 art.shape = obj.GetComponent<MeshFilter>().sharedMesh.name;
-            else if (!string.IsNullOrEmpty(art.context_img_source))
-                art.shape = null; // prefab/context image source might assume explicit shape or none
             else
                 art.shape = "empty";
 
@@ -573,6 +681,9 @@ public class MainMenu : EditorWindow
                 CanInterpolate = rigidData["CanInterpolate"].ToString(),
                 CollisionPolling = rigidData["CollisionPolling"].ToString()
             };
+
+            // Interaction
+            art.Interaction = HF.GetInteraction(obj);
 
             newArticles.Add(art);
         }
