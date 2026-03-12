@@ -63,6 +63,7 @@ The `article.json` file defines the GameObjects to be instantiated or managed in
 <!-- | `HasChild` | `int` | Set to `1` to indicate this object is a group parent. Set to `0` otherwise. |
 | `Children` | `string[]` | If `HasChild` is `1`, this list contains names of *existing* objects to group under this parent. The system will calculate the center and reparent them. | -->
 | `XRRigidObject` | `object` | Configuration for the Rigidbody component. See below. |
+| `Interaction` | `object` | Configuration for XR interaction capabilities (e.g., grab interactable). See below. |
 
 ### XRRigidObject Properties
 
@@ -77,10 +78,20 @@ The `article.json` file defines the GameObjects to be instantiated or managed in
 | `CollisionPolling` | `string` | Collision detection mode. <br>Values: `"discrete"`, `"continuous"`, `"continuous-dynamic"`, `"continuous-speculative"`. |
 | `CanInterpolate` | `string` | Interpolation mode. <br>`"0"`: None<br>`"1"`: Interpolate<br>`"2"`: Extrapolate |
 
+### Interaction Properties
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `XRGrabInteractable` | `string` | `"true"` to attach an `XRGrabInteractable` component, allowing the object to be picked up in VR. |
+| `XRInteractionMaskLayer` | `string[]` | List of layer indices or names (e.g., `["Default", "Grab"]`) to set the interaction layer mask. |
+| `TrackPosition` | `string` | `"true"` to track position when grabbed. |
+| `TrackRotation` | `string` | `"true"` to track rotation when grabbed. |
+| `Throw_Detach` | `string` | `"true"` to enable throwing physics upon detach. |
+
 ### Inheritance Logic
 If `source` is specified:
 1. The system finds the source article.
-2. It copies `shape`, `Transform_*`, `XRRigidObject`, `states`, `context_img_source`, from the source.
+2. It copies `shape`, `Transform_*`, `XRRigidObject`, `Interaction`, `states`, `context_img_source`, from the source.
 3. Any fields explicitly defined in the current article override the copied values.
 
 ---
@@ -108,7 +119,7 @@ The `behavior.json` file defines the logic rules, event triggers, and actions fo
 | Field | Type | Description |
 | :--- | :--- | :--- |
 | `id` | `string` | **Required.** Unique Identifier for this behavior. Used as the base for the generated class name (e.g., `BehaviorID_Obj1`). |
-| `event` | `string` | The trigger type.<br>`"OnCondition"`: Checks `precondition` every frame (Update loop).<br>`"OnStateChange"`: Triggered when the actor's state changes. |
+| `event` | `string` | The trigger type.<br>`"OnCondition"`: Checks `precondition` every frame (Update loop).<br>`"OnStateChange"`: Triggered when the actor's state changes.<br>`"OnXRInteraction"`: Triggered by user XR interaction. Auto-attaches an `XRSimpleInteractable` (and a `BoxCollider` if missing) if no interactable is present on the actor. |
 | `actors` | `string[]` | A list of explicit objects (actors) this behavior applies to. |
 | `precondition` | `ConditionNode` | Logic tree that must evaluate to `true` for the action to run. |
 | `action` | `ActionNode` | The action to execute if the event and precondition are met. |
@@ -149,6 +160,12 @@ You must use **exactly one** of the following logic types per condition node (or
     *   **Optional Field**: `params` (Dictionary)
         *   Maps arguments for the method.
         *   **Special Key**: `"obj": "Name"` converts to `GameObject.Find("Name")` in the generated code.
+
+5.  **`XRinteraction`** (XR Event Check)
+    *   **Type**: `string`
+    *   **Behavior**: Used as a precondition check when the behavior event is `"OnXRInteraction"`. 
+    *   **Valid Values**: Commonly `"select"` (fired when the object is selected/grabbed).
+    *   **Example**: `{ "XRinteraction": "select" }`
 
 ### ActionNode
 Defines what happens.
